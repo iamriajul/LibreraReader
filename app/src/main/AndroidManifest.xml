@@ -35,19 +35,6 @@
         android:vmSafeMode="${appSafeMode}"
         tools:replace="label, icon, roundIcon">
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="${admobAppId}" />
-        <meta-data
-            android:name="librera.ADMOB_BANNER_ID"
-            android:value="${admobBannerId}" />
-        <meta-data
-            android:name="librera.ADMOB_FULLSCREEN_ID"
-            android:value="${admobFullId}" />
-        <meta-data
-            android:name="librera.GOOGLE_DRIVE_KEY"
-            android:value="${appGdriveKey}" />
-
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -271,15 +258,6 @@
             </intent-filter>
         </activity>
 
-
-        <activity
-            android:name="com.foobnix.sys.TestActivity"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN1" />
-                <category android:name="android.intent.category.LAUNCHER1" />
-            </intent-filter>
-        </activity>
         <activity
             android:name="test.SvgActivity"
             android:launchMode="singleTop">

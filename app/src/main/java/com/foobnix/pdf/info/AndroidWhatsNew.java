@@ -105,8 +105,6 @@ public class AndroidWhatsNew {
             return;
         }
 
-        ADS.hideAdsTemp((Activity) c);
-
         View inflate = LayoutInflater.from(c).inflate(R.layout.whatsnew2, null, false);
 
         final WebView wv = inflate.findViewById(R.id.webView2);

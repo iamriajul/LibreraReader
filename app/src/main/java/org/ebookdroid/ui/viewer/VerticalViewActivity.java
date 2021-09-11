@@ -25,7 +25,6 @@ import com.foobnix.model.AppBook;
 import com.foobnix.model.AppProfile;
 import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
-import com.foobnix.pdf.info.ADS;
 import com.foobnix.pdf.info.Android6;
 import com.foobnix.pdf.info.ExtUtils;
 import com.foobnix.pdf.info.PasswordDialog;
@@ -89,7 +88,6 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        intetrstialTimeoutSec = ADS.FULL_SCREEN_TIMEOUT_SEC;
         DocumentController.doRotation(this);
         DocumentController.doContextMenu(this);
 
@@ -359,7 +357,6 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
 
         } else {
             getController().onConfigChanged();
-            activateAds();
         }
     }
 
@@ -391,10 +388,6 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
     public void onBackPressed() {
         // Toast.makeText(this, "onBackPressed", Toast.LENGTH_SHORT).show();
 
-        if (isInterstialShown()) {
-            getController().closeActivityFinal(null);
-            return;
-        }
         if (getController().getWrapperControlls().checkBack(new KeyEvent(KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_BACK))) {
             return;
         }
@@ -449,12 +442,6 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
             return true;
         }
         return super.onKeyDown(keyCode, event);
-    }
-
-    @Override
-    public void onFinishActivity() {
-        getController().closeActivityFinal(null);
-
     }
 
 }

@@ -30,7 +30,6 @@ import com.foobnix.drive.GFile;
 import com.foobnix.model.AppBookmark;
 import com.foobnix.model.AppData;
 import com.foobnix.model.AppState;
-import com.foobnix.pdf.info.ADS;
 import com.foobnix.pdf.info.BookmarksData;
 import com.foobnix.pdf.info.BuildConfig;
 import com.foobnix.pdf.info.Clouds;
@@ -88,8 +87,6 @@ public class FileInformationDialog {
     }
 
     public static void showFileInfoDialog(final Activity a, final File file, final Runnable onDeleteAction, boolean firstTime) {
-        ADS.hideAdsTemp(a);
-
         final FileMeta fileMeta = AppDB.get().getOrCreate(file.getPath());
 
 

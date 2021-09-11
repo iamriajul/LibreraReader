@@ -486,7 +486,6 @@ public class ViewerActivityController extends ActionController<VerticalViewActiv
     }
 
     public void closeActivity(final ActionEx action) {
-        viewerActivity.showInterstial();
         LOG.d("ViewerActivityController closeActivity");
     }
 

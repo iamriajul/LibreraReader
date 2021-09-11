@@ -18,7 +18,6 @@ import com.foobnix.model.AppData;
 import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.model.SimpleMeta;
-import com.foobnix.pdf.info.ADS;
 import com.foobnix.pdf.info.Clouds;
 import com.foobnix.pdf.info.ExtUtils;
 import com.foobnix.pdf.info.IMG;
@@ -381,8 +380,6 @@ public class DefaultListeners {
 
             @Override
             public boolean onResultRecive(final FileMeta result) {
-
-                ADS.hideAdsTemp(a);
 
                 File file = new File(result.getPath());
 

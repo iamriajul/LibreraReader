@@ -16,7 +16,6 @@ import com.foobnix.pdf.info.IMG;
 import com.foobnix.pdf.info.R;
 import com.foobnix.pdf.info.TintUtil;
 import com.foobnix.tts.TTSNotification;
-import com.google.android.gms.ads.MobileAds;
 
 import org.ebookdroid.droids.mupdf.codec.MuPdfDocument;
 
@@ -44,14 +43,7 @@ public class LibreraApp extends MultiDexApplication {
         context = getApplicationContext();
         Dips.init(this);
 
-        try {
-            if (!AppsConfig.checkIsProInstalled(this)) {
-                MobileAds.initialize(this, Apps.getMetaData(this, "com.google.android.gms.ads.APPLICATION_ID"));
-            }
-        } catch (Exception e) {
-            AppsConfig.IS_NO_ADS = true;
-            LOG.e(e);
-        }
+        AppsConfig.IS_NO_ADS = true;
 
 
         LOG.isEnable = BuildConfig.DEBUG || AppsConfig.IS_LOG || AppsConfig.IS_BETA;
@@ -109,7 +101,6 @@ public class LibreraApp extends MultiDexApplication {
                 }
             });
         }
-
 
 
     }

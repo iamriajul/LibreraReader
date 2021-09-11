@@ -25,6 +25,7 @@ import android.widget.Toast;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener;
+import androidx.fragment.app.FragmentActivity;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
@@ -93,7 +94,7 @@ import test.SvgActivity;
 
 
 @SuppressLint("NewApi")
-public class MainTabs2 extends AdsFragmentActivity {
+public class MainTabs2 extends FragmentActivity {
     public static final int REQUEST_CODE_ADD_RESOURCE = 123;
     public static final String EXTRA_EXIT = "EXTRA_EXIT";
     public static final String EXTRA_SHOW_TABS = "EXTRA_SHOW_TABS";
@@ -311,7 +312,6 @@ public class MainTabs2 extends AdsFragmentActivity {
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
-        withInterstitial = false;
         super.onPostCreate(savedInstanceState);
         // testIntentHandler();
 
@@ -899,7 +899,6 @@ public class MainTabs2 extends AdsFragmentActivity {
             pager.setCurrentItem(currentItem);
             IMG.clearMemoryCache();
         }
-        activateAds();
 
     }
 
@@ -915,11 +914,6 @@ public class MainTabs2 extends AdsFragmentActivity {
             return true;
         }
         return super.onKeyLongPress(keyCode, event);
-    }
-
-    @Override
-    public void onFinishActivity() {
-        finish();
     }
 
     @Override
@@ -939,10 +933,5 @@ public class MainTabs2 extends AdsFragmentActivity {
         } else {
             closeActivityRunnable.run();
         }
-    }
-
-    @Subscribe
-    public void onCloseAppMsg(MsgCloseMainTabs event) {
-        onFinishActivity();
     }
 }

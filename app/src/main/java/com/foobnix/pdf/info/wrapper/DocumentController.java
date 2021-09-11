@@ -34,7 +34,6 @@ import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.pdf.info.ExtUtils;
 import com.foobnix.pdf.info.IMG;
-import com.foobnix.pdf.info.MyADSProvider;
 import com.foobnix.pdf.info.OutlineHelper;
 import com.foobnix.pdf.info.PageUrl;
 import com.foobnix.pdf.info.R;
@@ -418,9 +417,6 @@ public abstract class DocumentController {
         return MyMath.percent(getCurentPageFirst1(), getPageCount());
     }
 
-    public MyADSProvider getAdsProvider() {
-        return null;
-    }
 
     public abstract void updateRendering();
 

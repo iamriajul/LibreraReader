@@ -24,7 +24,6 @@ import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.view.WindowManager;
@@ -41,6 +40,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager.widget.ViewPager;
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener;
 
@@ -58,7 +58,6 @@ import com.foobnix.model.AppProfile;
 import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.pdf.CopyAsyncTask;
-import com.foobnix.pdf.info.ADS;
 import com.foobnix.pdf.info.Android6;
 import com.foobnix.pdf.info.AppsConfig;
 import com.foobnix.pdf.info.BookmarksData;
@@ -105,7 +104,6 @@ import com.foobnix.tts.TTSEngine;
 import com.foobnix.tts.TTSNotification;
 import com.foobnix.tts.TTSService;
 import com.foobnix.tts.TtsStatus;
-import com.foobnix.ui2.AdsFragmentActivity;
 import com.foobnix.ui2.AppDB;
 import com.foobnix.ui2.MainTabs2;
 import com.foobnix.ui2.MyContextWrapper;
@@ -121,7 +119,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class HorizontalViewActivity extends AdsFragmentActivity {
+public class HorizontalViewActivity extends FragmentActivity {
 
     public boolean prev = true;
     VerticalViewPager viewPager;
@@ -413,7 +411,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         quickBookmark = getString(R.string.fast_bookmark);
-        intetrstialTimeoutSec = ADS.FULL_SCREEN_TIMEOUT_SEC;
         LOG.d("getRequestedOrientation", AppState.get().orientation, getRequestedOrientation());
 
 
@@ -1035,7 +1032,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
             public void onClick(final View v) {
                 nullAdapter();
                 closeDialogs();
-                showInterstial();
             }
 
         });
@@ -1739,9 +1735,7 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
 
         clickUtils.init();
         LOG.d("MessageEvent", ev.getMessage(), ev.getX(), ev.getY());
-        if (ev.getMessage().equals(MessageEvent.MESSAGE_CLOSE_BOOK)) {
-            showInterstial();
-        } else if (ev.getMessage().equals(MessageEvent.MESSAGE_CLOSE_BOOK_APP)) {
+        if (ev.getMessage().equals(MessageEvent.MESSAGE_CLOSE_BOOK_APP)) {
             dc.onCloseActivityFinal(new Runnable() {
 
                 @Override
@@ -1857,7 +1851,7 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
 
             @Override
             public void showInterstialAndClose() {
-                showInterstial();
+
             }
 
         };
@@ -2069,9 +2063,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public void onRotateScreen() {
-        // ADS.activate(this, adView);
-        activateAds();
-
         AppProfile.save(this);
         if (ExtUtils.isTextFomat(getIntent())) {
             nullAdapter();
@@ -2166,7 +2157,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
             AppState.get().isEditMode = true;
             ttsFixPosition();
         }
-
 
 
         updateBannnerTop();
@@ -2456,10 +2446,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
     @Override
     public void onBackPressed() {
         // Toast.makeText(this, "onBackPressed", Toast.LENGTH_SHORT).show();
-        if (isInterstialShown()) {
-            onFinishActivity();
-            return;
-        }
         if (dc != null && dc.floatingBookmark != null) {
             dc.floatingBookmark = null;
             onRefresh.run();
@@ -2485,24 +2471,6 @@ public class HorizontalViewActivity extends AdsFragmentActivity {
 
         if (AppState.get().isShowLongBackDialog) {
             CloseAppDialog.showOnLongClickDialog(HorizontalViewActivity.this, null, dc);
-        } else {
-            showInterstial();
-        }
-    }
-
-    @Override
-    public void onFinishActivity() {
-        if (handler != null) {
-            handler.removeCallbacksAndMessages(null);
-        }
-        nullAdapter();
-
-        if (dc != null) {
-            dc.saveCurrentPageAsync();
-            dc.onCloseActivityFinal(null);
-            dc.closeActivity();
-        } else {
-            finish();
         }
     }
 

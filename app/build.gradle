@@ -30,7 +30,7 @@ ext {
 android {
     buildToolsVersion '30.0.2'
     compileSdkVersion 30
-    //ndkVersion "21.3.6528147"
+//    ndkVersion "21.3.6528147"
     defaultConfig {
         applicationId "com.foobnix.pdf.reader"
         minSdkVersion 14
@@ -60,20 +60,20 @@ android {
 
     }
 
-    signingConfigs {
-        release {
-            storeFile file(RELEASE_STORE_FILE)
-            storePassword RELEASE_STORE_PASSWORD
-            keyAlias RELEASE_KEY_ALIAS
-            keyPassword RELEASE_KEY_PASSWORD
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile file(RELEASE_STORE_FILE)
+//            storePassword RELEASE_STORE_PASSWORD
+//            keyAlias RELEASE_KEY_ALIAS
+//            keyPassword RELEASE_KEY_PASSWORD
+//        }
+//    }
 
 
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
             debuggable false
         }
         debug {
@@ -366,24 +366,7 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.12.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
-
-    alphaImplementation project(':pro')
-    proImplementation project(':pro')
-    fdroidImplementation project(':pro')
     implementation project(':smartreflow')
-
-    libreraImplementation 'com.google.firebase:firebase-ads:18.3.0'
-
-    betaImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    pdf_v2Implementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    ebookaImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    tts_readerImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    pdf_classicImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    epub_readerImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-    huaweiImplementation 'com.google.firebase:firebase-ads-lite:18.3.0'
-
-    //implementation 'com.google.guava:guava:27.0.1-android'
-
 
 }
 

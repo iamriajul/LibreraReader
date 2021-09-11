@@ -31,14 +31,12 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.foobnix.android.utils.Apps;
 import com.foobnix.android.utils.BaseItemLayoutAdapter;
 import com.foobnix.android.utils.Dips;
 import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
 import com.foobnix.android.utils.TxtUtils;
 import com.foobnix.model.AppState;
-import com.foobnix.pdf.info.ADS;
 import com.foobnix.pdf.info.R;
 import com.foobnix.pdf.info.TintUtil;
 import com.foobnix.pdf.info.model.BookCSS;
@@ -75,14 +73,6 @@ public class MyPopupMenu {
     }
 
     public void show(int pos, boolean isLong) {
-        try {
-            if (c instanceof MainTabs2) {
-                ADS.hideAdsTemp((Activity) c);
-            }
-        } catch (Exception e) {
-            LOG.e(e);
-        }
-
         final ListPopupWindow p1 = new ListPopupWindow(c);
 
 
