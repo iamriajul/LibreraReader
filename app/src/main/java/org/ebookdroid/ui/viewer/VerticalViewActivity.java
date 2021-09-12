@@ -131,7 +131,7 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
         if (PasswordDialog.isNeedPasswordDialog(this)) {
             return;
         }
-        setContentView(R.layout.activity_vertical_view);
+        setContentView(R.layout.activity_vertical_reader);
 
         if (!Android6.canWrite(this)) {
             Android6.checkPermissions(this, true);
