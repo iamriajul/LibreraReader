@@ -29,6 +29,7 @@ import com.foobnix.pdf.info.Android6;
 import com.foobnix.pdf.info.ExtUtils;
 import com.foobnix.pdf.info.PasswordDialog;
 import com.foobnix.pdf.info.R;
+import com.foobnix.pdf.info.databinding.ActivityVerticalViewBinding;
 import com.foobnix.pdf.info.model.BookCSS;
 import com.foobnix.pdf.info.view.BrightnessHelper;
 import com.foobnix.pdf.info.wrapper.DocumentController;
@@ -50,6 +51,8 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
 
     private FrameLayout frameLayout;
 
+    private ActivityVerticalViewBinding binding;
+
     /**
      * Instantiates a new base viewer activity.
      */
@@ -59,6 +62,7 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
 
     @Override
     protected void onNewIntent(final Intent intent) {
+        super.onNewIntent(intent);
         LOG.d("VerticalViewActivity", "onNewIntent");
         if (TTSNotification.ACTION_TTS.equals(intent.getAction())) {
             return;
@@ -131,7 +135,8 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
         if (PasswordDialog.isNeedPasswordDialog(this)) {
             return;
         }
-        setContentView(R.layout.activity_vertical_view);
+        binding = ActivityVerticalViewBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         if (!Android6.canWrite(this)) {
             Android6.checkPermissions(this, true);
@@ -140,12 +145,10 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
 
 
         getController().createWrapper(this);
-        frameLayout = (FrameLayout) findViewById(R.id.documentView);
+        frameLayout = binding.documentView; //(FrameLayout) findViewById(R.id.documentView);
 
 
         view = new PdfSurfaceView(getController());
-
-
 
 
         frameLayout.addView(view.getView());

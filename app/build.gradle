@@ -327,6 +327,11 @@ android {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
     }
+
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
 }
 
 
@@ -367,6 +372,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     implementation project(':smartreflow')
+
+    implementation 'com.github.attenzione:android-ColorPickerPreference:v1.2.1'
 
 }
 
