@@ -4,18 +4,18 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/tint_blue"
         android:clickable="true"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <LinearLayout
-            android:visibility="gone"
             android:id="@+id/playListParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/playListName"
@@ -25,8 +25,7 @@
                 android:text="Playlists"
                 android:textColor="#ffffff"
                 android:textStyle="bold"
-                android:visibility="gone"
-             />
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/playListNameEdit"
@@ -40,13 +39,12 @@
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:visibility="gone"
             android:id="@+id/playlistRecycleView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dip" >
-        </androidx.recyclerview.widget.RecyclerView>
+            android:padding="5dip"
+            android:visibility="gone"></androidx.recyclerview.widget.RecyclerView>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -54,9 +52,9 @@
             android:clickable="true"
             android:gravity="center"
             android:paddingLeft="2dip"
-            android:paddingRight="2dip"
             android:paddingTop="2dip"
-            android:visibility="visible" >
+            android:paddingRight="2dip"
+            android:visibility="visible">
 
             <ImageView
                 android:id="@+id/linkHistory"
@@ -155,7 +153,7 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:paddingLeft="2dip"
-            android:paddingRight="2dip" >
+            android:paddingRight="2dip">
 
             <TextView
                 android:id="@+id/currentSeek"
@@ -176,11 +174,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginBottom="2dip"
                 android:layout_marginTop="2dip"
+                android:layout_marginBottom="2dip"
                 android:layout_weight="1"
-                android:paddingBottom="3dip"
                 android:paddingTop="3dip"
+                android:paddingBottom="3dip"
                 android:progressTint="@android:color/white"
                 android:thumbTint="@android:color/white" />
 
@@ -205,9 +203,9 @@
             android:clickable="true"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingBottom="2dip"
             android:paddingLeft="2dip"
-            android:paddingRight="2dip" >
+            android:paddingRight="2dip"
+            android:paddingBottom="2dip">
 
             <ImageView
                 android:id="@+id/autoScroll"
@@ -234,7 +232,7 @@
                 android:layout_height="@dimen/wh_button"
                 android:layout_weight="0"
                 android:src="@drawable/document"
-                android:visibility="gone" />
+                android:visibility="visible" />
 
             <TextView
                 android:id="@+id/modeName"

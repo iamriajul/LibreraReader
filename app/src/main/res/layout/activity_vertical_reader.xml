@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parentParent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/documentView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="94dip"
+        android:orientation="horizontal">
+
+        <TextView
+            android:visibility="visible"
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="220dip"
+            android:layout_weight="1"
+            android:background="@drawable/bg_border_ltgray_dash" />
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/line2"
+            android:layout_width="match_parent"
+            android:layout_height="220dip"
+            android:layout_weight="1"
+            android:background="@drawable/bg_border_ltgray_dash" />
+    </LinearLayout>
+
+    <com.foobnix.pdf.info.view.DrawView
+        android:id="@+id/drawView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+
+    <FrameLayout
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/anchorX"
+        android:layout_width="@dimen/wh_button"
+        android:layout_height="@dimen/wh_button"
+        android:layout_marginTop="100dip"
+        android:src="@drawable/glyphicons_basic_299_circle_selected"
+        android:tint="@color/tint_blue" />
+
+    <ImageView
+        android:id="@+id/anchorY"
+        android:layout_width="@dimen/wh_button"
+        android:layout_height="@dimen/wh_button"
+        android:layout_marginTop="150dip"
+        android:src="@drawable/glyphicons_basic_298_circle_empty"
+        android:tint="@color/tint_blue" />
+
+    <FrameLayout
+        android:id="@+id/anchor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="false"
+        android:minWidth="10dip"
+        android:minHeight="10dip"
+        android:visibility="gone" />
+
+</RelativeLayout>
