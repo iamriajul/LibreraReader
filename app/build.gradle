@@ -39,6 +39,8 @@ android {
         versionName versionNumber
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
+
+        vectorDrawables.useSupportLibrary = true
     }
 
     configurations {
@@ -328,15 +330,12 @@ android {
         exclude 'META-INF/NOTICE.txt'
     }
 
-    buildFeatures {
-        dataBinding = true
-        viewBinding = true
-    }
 }
 
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.android.material:material:1.4.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.3.0'
