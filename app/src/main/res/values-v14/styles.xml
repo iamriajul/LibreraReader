@@ -3,17 +3,17 @@
 
 
 
-    <style name="StyledIndicatorsWhite" parent="@android:style/Theme.DeviceDefault.Light.NoActionBar">
+    <style name="StyledIndicatorsWhite" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowDisablePreview">true</item>
     </style>
     
-     <style name="StyledIndicatorsBlack" parent="@android:style/Theme.DeviceDefault.NoActionBar">
+     <style name="StyledIndicatorsBlack" parent="Theme.MaterialComponents.Light.NoActionBar">
          <item name="android:windowNoTitle">true</item>
          <item name="android:windowDisablePreview">true</item>
     </style>
 
-    <style name="ToggleButtonWithIconOnly" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="ToggleButtonWithIconOnly" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="iconPadding">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
@@ -25,7 +25,7 @@
         <item name="iconTint">@color/toggle_icon_color</item>
     </style>
 
-    <style name="ToggleButtonText" parent="Widget.MaterialComponents.Button.TextButton">
+    <style name="ToggleButtonText" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="iconPadding">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>

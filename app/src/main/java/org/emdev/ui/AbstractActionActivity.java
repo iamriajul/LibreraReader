@@ -3,12 +3,13 @@ package org.emdev.ui;
 import android.content.Intent;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 
 import org.emdev.ui.actions.ActionController;
 import org.emdev.ui.actions.ActionEx;
 
-public abstract class AbstractActionActivity<A extends FragmentActivity, C extends ActionController<A>> extends FragmentActivity {
+public abstract class AbstractActionActivity<A extends FragmentActivity, C extends ActionController<A>> extends AppCompatActivity {
 
     public static final String MENU_ITEM_SOURCE = "source";
     public static final String ACTIVITY_RESULT_DATA = "activityResultData";
@@ -33,6 +34,7 @@ public abstract class AbstractActionActivity<A extends FragmentActivity, C exten
 
     @Override
     protected void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_CANCELED) {
             return;
         }

@@ -447,7 +447,7 @@ public class VerticalModeController extends DocumentController {
     }
 
     @Override
-    public void onAutoScroll() {
+    public void onContinuousAutoScroll() {
         if (t.isAlive()) {
             return;
         }
@@ -456,7 +456,7 @@ public class VerticalModeController extends DocumentController {
 
             @Override
             public void run() {
-                while (AppState.get().isAutoScroll) {
+                while (AppState.get().isContinuousAutoScroll) {
                     boolean repeat = false;
 
                     long l = System.currentTimeMillis() - begin;
@@ -485,7 +485,7 @@ public class VerticalModeController extends DocumentController {
                     }
 
                     try {
-                        float x = AppState.get().autoScrollSpeed;
+                        float x = AppState.get().continuousAutoScrollSpeed;
 
                         if (x <= 50) {
                             x = x * 2;
@@ -539,14 +539,15 @@ public class VerticalModeController extends DocumentController {
     public int getScrollValue() {
         int value = ctr.getDocumentController().getView().getHeight() - Dips.dpToPx(4);
 
-        View titleBar = activity.findViewById(R.id.titleBar);
+        View titleBar = activity.findViewById(R.id.titleToolbar);
         if (titleBar.getVisibility() == View.VISIBLE) {
             value = value - titleBar.getHeight();
         }
+        /*
         View progress = activity.findViewById(R.id.progressDraw);
         if (progress.getVisibility() == View.VISIBLE) {
             value = value - progress.getHeight();
-        }
+        }*/
 
         return value;
     }
@@ -925,7 +926,7 @@ public class VerticalModeController extends DocumentController {
     }
 
     public void onDestroy() {
-        AppState.get().isAutoScroll = false;
+        AppState.get().isContinuousAutoScroll = false;
     }
 
 }

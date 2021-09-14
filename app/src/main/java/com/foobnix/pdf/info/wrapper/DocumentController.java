@@ -385,7 +385,7 @@ public abstract class DocumentController {
 
     public abstract void onScrollYPercent(float value);
 
-    public abstract void onAutoScroll();
+    public abstract void onContinuousAutoScroll();
 
     public abstract void clearSelectedText();
 

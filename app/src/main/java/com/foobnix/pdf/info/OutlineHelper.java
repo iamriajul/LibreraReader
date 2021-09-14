@@ -114,8 +114,8 @@ public class OutlineHelper {
             }
         }
 
-        if (AppState.get().isAutoScroll) {
-            info.chText = String.format("{%s} %s", AppState.get().autoScrollSpeed, info.chText);
+        if (AppState.get().isContinuousAutoScroll) {
+            info.chText = String.format("{%s} %s", AppState.get().continuousAutoScrollSpeed, info.chText);
         }
 
         return info;

@@ -25,7 +25,7 @@ public class AppBook implements CurrentPageListener {
     public int lk = LOCK_NONE;
     public float x; //offsetX
     public float y; //offsetY
-    public int s = AppState.get().autoScrollSpeed; //speed
+    public int s = AppState.get().continuousAutoScrollSpeed; //speed
     public int d = 0;//delta
 
     public float p; //percent
@@ -52,7 +52,7 @@ public class AppBook implements CurrentPageListener {
         sp = AppSP.get().isCut;
         dc = AppSP.get().isDoubleCoverAlone;
         d = TempHolder.get().pageDelta;
-        s = AppState.get().autoScrollSpeed;
+        s = AppState.get().continuousAutoScrollSpeed;
         setLock(AppSP.get().isLocked);
     }
 

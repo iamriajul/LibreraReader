@@ -11,22 +11,24 @@ import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MenuItem.OnMenuItemClickListener;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnLongClickListener;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
-import androidx.core.graphics.ColorUtils;
+import androidx.annotation.NonNull;
+import androidx.appcompat.widget.LinearLayoutCompat;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.foobnix.android.utils.Apps;
 import com.foobnix.android.utils.Dips;
@@ -35,7 +37,6 @@ import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
 import com.foobnix.android.utils.TxtUtils;
 import com.foobnix.android.utils.Vibro;
-import com.foobnix.android.utils.Views;
 import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.pdf.info.AppsConfig;
@@ -48,33 +49,26 @@ import com.foobnix.pdf.info.R;
 import com.foobnix.pdf.info.TintUtil;
 import com.foobnix.pdf.info.UiSystemUtils;
 import com.foobnix.pdf.info.model.OutlineLinkWrapper;
-import com.foobnix.pdf.info.view.AlertDialogs;
 import com.foobnix.pdf.info.view.AnchorHelper;
-import com.foobnix.pdf.info.view.BookmarkPanel;
 import com.foobnix.pdf.info.view.BrightnessHelper;
 import com.foobnix.pdf.info.view.CustomSeek;
-import com.foobnix.pdf.info.view.Dialogs;
-import com.foobnix.pdf.info.view.DialogsPlaylist;
 import com.foobnix.pdf.info.view.DragingDialogs;
 import com.foobnix.pdf.info.view.DrawView;
-import com.foobnix.pdf.info.view.HorizontallSeekTouchEventListener;
-import com.foobnix.pdf.info.view.HypenPanelHelper;
 import com.foobnix.pdf.info.view.MyPopupMenu;
-import com.foobnix.pdf.info.view.UnderlineImageView;
 import com.foobnix.pdf.info.widget.DraggbleTouchListener;
 import com.foobnix.pdf.info.widget.ShareDialog;
-import com.foobnix.pdf.search.activity.HorizontalViewActivity;
 import com.foobnix.pdf.search.activity.msg.MessagePageXY;
 import com.foobnix.pdf.search.activity.msg.MessegeBrightness;
 import com.foobnix.pdf.search.view.CloseAppDialog;
 import com.foobnix.sys.TempHolder;
 import com.foobnix.tts.MessagePageNumber;
-import com.foobnix.tts.TTSControlsView;
 import com.foobnix.tts.TTSEngine;
 import com.foobnix.tts.TTSService;
 import com.foobnix.tts.TtsStatus;
 import com.foobnix.ui2.AppDB;
 import com.foobnix.ui2.MainTabs2;
+import com.google.android.material.slider.Slider;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.ebookdroid.BookType;
 import org.ebookdroid.LibreraApp;
@@ -221,7 +215,10 @@ public class DocumentWrapperUI {
     };
     Activity a;
     String bookTitle;
-    View titleBar, overlay, menuLayout, bottomBar;
+    View overlay;
+    Toolbar toolbar;
+    DrawerLayout mainDrawer;
+    LinearLayoutCompat llPages;
     public View.OnLongClickListener onCloseLongClick = new View.OnLongClickListener() {
 
         @Override
@@ -370,7 +367,7 @@ public class DocumentWrapperUI {
 
         @Override
         public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
-            AppState.get().autoScrollSpeed = progress + 1;
+            AppState.get().continuousAutoScrollSpeed = progress + 1;
             updateSpeedLabel();
 
             // hideSeekBarInReadMode();
@@ -404,7 +401,7 @@ public class DocumentWrapperUI {
 
         @Override
         public void onClick(final View arg0) {
-            onAutoScrollClick();
+            onContinuousAutoScrollClick();
         }
     };
     public View.OnClickListener onLinkHistory = new View.OnClickListener() {
@@ -520,7 +517,7 @@ public class DocumentWrapperUI {
 
             updateUI();
 
-            titleBar.setOnTouchListener(new HorizontallSeekTouchEventListener(onSeek, dc.getPageCount(), false));
+//            titleBar.setOnTouchListener(new HorizontallSeekTouchEventListener(onSeek, dc.getPageCount(), false));
 
         }
     };
@@ -639,7 +636,7 @@ public class DocumentWrapperUI {
 
     public void onSingleTap() {
         if (dc.isMusicianMode()) {
-            onAutoScrollClick();
+            onContinuousAutoScrollClick();
         } else {
             doShowHideWrapperControlls();
         }
@@ -691,8 +688,8 @@ public class DocumentWrapperUI {
             closeAndRunList();
             return true;
         }
-        if (AppState.get().isAutoScroll) {
-            AppState.get().isAutoScroll = false;
+        if (AppState.get().isContinuousAutoScroll) {
+            AppState.get().isContinuousAutoScroll = false;
             updateUI();
             return true;
         }
@@ -756,7 +753,7 @@ public class DocumentWrapperUI {
             if (TTSEngine.get().isTempPausing()) {
                 TTSService.playPause(dc.getActivity(), dc);
             } else {
-                onAutoScrollClick();
+                onContinuousAutoScrollClick();
             }
             return true;
         }
@@ -767,7 +764,7 @@ public class DocumentWrapperUI {
         }
 
         if (KeyEvent.KEYCODE_A == keyCode || KeyEvent.KEYCODE_SPACE == keyCode) {
-            onAutoScrollClick();
+            onContinuousAutoScrollClick();
             return true;
         }
 
@@ -784,25 +781,28 @@ public class DocumentWrapperUI {
 
         }
 
-        if (AppState.get().isScrollSpeedByVolumeKeys && AppState.get().isUseVolumeKeys && AppState.get().isAutoScroll) {
+        if (AppState.get().isScrollSpeedByVolumeKeys && AppState.get().isUseVolumeKeys && AppState.get().isContinuousAutoScroll) {
             if (KeyEvent.KEYCODE_VOLUME_UP == keyCode) {
-                if (AppState.get().autoScrollSpeed > 1) {
-                    AppState.get().autoScrollSpeed -= 1;
-                    dc.onAutoScroll();
+                if (AppState.get().continuousAutoScrollSpeed > 1) {
+                    AppState.get().continuousAutoScrollSpeed -= 1;
+                    dc.onContinuousAutoScroll();
                     updateUI();
                 }
                 return true;
             }
             if (KeyEvent.KEYCODE_VOLUME_DOWN == keyCode) {
-                if (AppState.get().autoScrollSpeed <= AppState.MAX_SPEED) {
-                    AppState.get().autoScrollSpeed += 1;
+                if (AppState.get().continuousAutoScrollSpeed <= AppState.MAX_SPEED) {
+                    AppState.get().continuousAutoScrollSpeed += 1;
                 }
-                dc.onAutoScroll();
+                dc.onContinuousAutoScroll();
                 updateUI();
                 return true;
             }
         }
 
+        Log.d("TAG", "dispatchKeyEventDown: " + AppState.get().isUseVolumeKeys);
+        Log.d("TAG", "dispatchKeyEventDown: " + AppState.get().getNextKeys());
+        Log.d("TAG", "dispatchKeyEventDown: " + AppState.get().getPrevKeys());
         if (!TTSEngine.get().isPlaying()) {
             if (AppState.get().isUseVolumeKeys && AppState.get().getNextKeys().contains(keyCode)) {
                 if (closeDialogs()) {
@@ -873,9 +873,9 @@ public class DocumentWrapperUI {
             handler.removeCallbacksAndMessages(null);
         }
 
-        if (titleBar != null) {
-            titleBar.removeCallbacks(null);
-        }
+//        if (titleBar != null) {
+//            titleBar.removeCallbacks(null);
+//        }
         dc.saveCurrentPageAsync();
         dc.onCloseActivityAdnShowInterstial();
         dc.closeActivity();
@@ -943,7 +943,7 @@ public class DocumentWrapperUI {
             handler.postDelayed(clearFlags, TimeUnit.MINUTES.toMillis(AppState.get().inactivityTime));
         }
 
-        if (AppState.get().isAutoScroll) {
+        if (AppState.get().isContinuousAutoScroll) {
 //            pagesBookmark.setVisibility(View.GONE);
         } else {
 //            pagesBookmark.setVisibility(View.VISIBLE);
@@ -1048,7 +1048,18 @@ public class DocumentWrapperUI {
     public void initUI(final Activity a) {
         this.a = a;
         quickBookmark = a.getString(R.string.fast_bookmark);
-
+        toolbar = a.findViewById(R.id.titleToolbar);
+        llPages = a.findViewById(R.id.llPages);
+        mainDrawer = a.findViewById(R.id.main_drawer);
+        mainDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        setupSettingsView(a);
+        toolbar.setOnMenuItemClickListener(item -> {
+            if (item.getItemId() == R.id.action_more) {
+                toggleSettingDrawer();
+                return true;
+            }
+            return false;
+        });
 
 //        seekBar = (SeekBar) a.findViewById(R.id.seekBar);
 //        seekBar.setAccessibilityDelegate(new View.AccessibilityDelegate());
@@ -1129,8 +1140,8 @@ public class DocumentWrapperUI {
         touch1.setOnMove(onMoveAction);
         touch2.setOnMove(onMoveAction);
 
-        titleBar = a.findViewById(R.id.titleBar);
-        titleBar.setOnClickListener(onMenu);
+//        titleBar = a.findViewById(R.id.titleBar);
+//        titleBar.setOnClickListener(onMenu);
 
         overlay = a.findViewById(R.id.overlay);
         overlay.setVisibility(View.VISIBLE);
@@ -1259,7 +1270,7 @@ public class DocumentWrapperUI {
 //        });
 
 
-        AppState.get().isAutoScroll = false;
+        AppState.get().isContinuousAutoScroll = false;
 
 //        ImageView recent = (ImageView) a.findViewById(R.id.onRecent);
 //        recent.setOnClickListener(onRecent);
@@ -1271,7 +1282,7 @@ public class DocumentWrapperUI {
             public void onGlobalLayout() {
                 if (anchor.getVisibility() == View.VISIBLE || dc.isMusicianMode()) {
                 } else {
-                    if (AppState.get().isEditMode ) {
+                    if (AppState.get().isEditMode) {
                     } else {
                     }
                 }
@@ -1291,7 +1302,7 @@ public class DocumentWrapperUI {
         // bottom 1
         TintUtil.setStatusBarColor(a);
 
-        TintUtil.setTintBgSimple(a.findViewById(R.id.menuLayout), AppState.get().transparencyUI);
+//        TintUtil.setTintBgSimple(a.findViewById(R.id.menuLayout), AppState.get().transparencyUI);
 //        TintUtil.setTintBgSimple(a.findViewById(R.id.bottomBar1), AppState.get().transparencyUI);
 //        TintUtil.setBackgroundFillColorBottomRight(lirbiLogo, ColorUtils.setAlphaComponent(TintUtil.color, AppState.get().transparencyUI));
         tintSpeed();
@@ -1324,6 +1335,72 @@ public class DocumentWrapperUI {
 
     }
 
+    private SwitchMaterial autoScrollSwitch;
+    private Slider autoScrollIntervalSlider;
+
+    private SwitchMaterial continuousAutoScrollSwitch;
+    private Slider continuousAutoScrollSlider;
+
+    private SwitchMaterial useVolumeKeyToPageNavigationSwitch;
+    private Slider blueLightFilterSlider;
+
+    private void setupSettingsView(Activity a) {
+        a.findViewById(R.id.close_image_view).setOnClickListener(v -> toggleSettingDrawer());
+        //Auto Scroll Config
+        autoScrollSwitch = a.findViewById(R.id.auto_scroll_switch);
+        autoScrollIntervalSlider = a.findViewById(R.id.auto_scroll_interval_slider);
+        autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
+        autoScrollIntervalSlider.setEnabled(AppState.get().isAutoScroll);
+        autoScrollIntervalSlider.setValue(AppState.get().autoScrollInterval);
+        autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                autoScrollIntervalSlider.setEnabled(isChecked)
+        );
+        autoScrollIntervalSlider.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                AppState.get().autoScrollInterval = (int) value;
+            }
+        });
+
+        //Continuous Auto Scoll Config
+        continuousAutoScrollSwitch = a.findViewById(R.id.continuous_auto_scroll_switch);
+        continuousAutoScrollSlider = a.findViewById(R.id.contiguous_auto_scroll_interval_slider);
+        continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
+        continuousAutoScrollSlider.setEnabled(AppState.get().isContinuousAutoScroll);
+        continuousAutoScrollSlider.setValue(AppState.get().continuousAutoScrollSpeed);
+        continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                continuousAutoScrollSlider.setEnabled(isChecked)
+        );
+        continuousAutoScrollSlider.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                AppState.get().continuousAutoScrollSpeed = (int) value;
+            }
+        });
+
+        //Use volume key for page navigation
+        useVolumeKeyToPageNavigationSwitch = a.findViewById(R.id.volume_to_control_switch);
+        useVolumeKeyToPageNavigationSwitch.setChecked(AppState.get().isUseVolumeKeys);
+        useVolumeKeyToPageNavigationSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
+                AppState.get().isUseVolumeKeys = isChecked
+        );
+
+        //Blue Light Filter
+        blueLightFilterSlider = a.findViewById(R.id.blue_light_slider);
+        blueLightFilterSlider.setValue(BrightnessHelper.blueLightAlpha());
+        blueLightFilterSlider.addOnChangeListener((slider, value, fromUser) -> {
+            if (fromUser) {
+                BrightnessHelper.blueLightAlpha((int) value);
+            }
+        });
+    }
+
+    private void toggleSettingDrawer() {
+        if (mainDrawer.isDrawerOpen(GravityCompat.END)) {
+            mainDrawer.closeDrawer(GravityCompat.END);
+        } else {
+            mainDrawer.openDrawer(GravityCompat.END);
+        }
+    }
+
     public void updateSeekBarColorAndSize() {
 //        lirbiLogo.setText(AppState.get().musicText);
         // TintUtil.setBackgroundFillColorBottomRight(ttsActive,
@@ -1332,7 +1409,7 @@ public class DocumentWrapperUI {
 //        TintUtil.setTintText(bookName, TintUtil.getStatusBarColor());
 
         int titleColor = AppState.get().isDayNotInvert ? MagicHelper.otherColor(AppState.get().colorDayBg, -0.05f) : MagicHelper.otherColor(AppState.get().colorNigthBg, 0.05f);
-        titleBar.setBackgroundColor(titleColor);
+//        titleBar.setBackgroundColor(titleColor);
 
         int progressColor = AppState.get().isDayNotInvert ? AppState.get().statusBarColorDay : MagicHelper.otherColor(AppState.get().statusBarColorNight, +0.2f);
 
@@ -1373,8 +1450,8 @@ public class DocumentWrapperUI {
                 dc.alignDocument();
             } else if (AppState.get().doubleClickAction1 == AppState.DOUBLE_CLICK_CENTER_HORIZONTAL) {
                 dc.centerHorizontal();
-            } else if (AppState.get().doubleClickAction1 == AppState.DOUBLE_CLICK_AUTOSCROLL) {
-                onAutoScrollClick();
+            } else if (AppState.get().doubleClickAction1 == AppState.DOUBLE_CLICK_CONTIUOUSAUTOSCROLL) {
+                onContinuousAutoScrollClick();
             } else if (AppState.get().doubleClickAction1 == AppState.DOUBLE_CLICK_CLOSE_BOOK) {
                 closeAndRunList();
             } else if (AppState.get().doubleClickAction1 == AppState.DOUBLE_CLICK_CLOSE_HIDE_APP) {
@@ -1494,9 +1571,9 @@ public class DocumentWrapperUI {
 
     public void initToolBarPlusMinus() {
         if (AppState.get().isEditMode || AppState.get().isShowToolBar) {
-            titleBar.setVisibility(View.VISIBLE);
+//            titleBar.setVisibility(View.VISIBLE);
         } else {
-            titleBar.setVisibility(View.GONE);
+//            titleBar.setVisibility(View.GONE);
         }
 
     }
@@ -1531,18 +1608,18 @@ public class DocumentWrapperUI {
         }
         initToolBarPlusMinus();
 
-        if (AppState.get().isAutoScroll) {
+        if (AppState.get().isContinuousAutoScroll) {
 //            autoScroll.setImageResource(R.drawable.glyphicons_37_file_pause);
         } else {
 //            autoScroll.setImageResource(R.drawable.glyphicons_37_file_play);
         }
 
         if (dc.isMusicianMode()) {
-            if (AppState.get().isAutoScroll) {
+            if (AppState.get().isContinuousAutoScroll) {
             } else {
             }
         } else {
-            if (AppState.get().isEditMode && AppState.get().isAutoScroll) {
+            if (AppState.get().isEditMode && AppState.get().isContinuousAutoScroll) {
             } else {
             }
         }
@@ -1564,8 +1641,8 @@ public class DocumentWrapperUI {
     }
 
     public void hide() {
-        menuLayout.setVisibility(View.GONE);
-        bottomBar.setVisibility(View.GONE);
+        toolbar.setVisibility(View.GONE);
+        llPages.setVisibility(View.GONE);
 //        imageMenuArrow.setImageResource(android.R.drawable.arrow_down_float);
 
         // speedSeekBar.setVisibility(View.GONE);
@@ -1580,13 +1657,12 @@ public class DocumentWrapperUI {
     }
 
     public void show() {
-        menuLayout.setVisibility(View.VISIBLE);
-
-        titleBar.setVisibility(View.VISIBLE);
+        llPages.setVisibility(View.VISIBLE);
+        toolbar.setVisibility(View.VISIBLE);
 
         updateLock();
 
-        bottomBar.setVisibility(View.VISIBLE);
+//        bottomBar.setVisibility(View.VISIBLE);
 
 //        imageMenuArrow.setImageResource(android.R.drawable.arrow_up_float);
 
@@ -1611,14 +1687,14 @@ public class DocumentWrapperUI {
         DragingDialogs.searchMenu(anchor, dc, "");
     }
 
-    public void onAutoScrollClick() {
+    public void onContinuousAutoScrollClick() {
         if (dc.isVisibleDialog()) {
             return;
         }
 
-        AppState.get().isAutoScroll = !AppState.get().isAutoScroll;
+        AppState.get().isContinuousAutoScroll = !AppState.get().isContinuousAutoScroll;
         // changeAutoScrollButton();
-        dc.onAutoScroll();
+        dc.onContinuousAutoScroll();
         updateUI();
     }
 
@@ -1743,7 +1819,7 @@ public class DocumentWrapperUI {
                 public void run() {
                     Apps.accessibilityText(a, a.getString(R.string.book_is_open), a.getString(R.string.m_current_page), " " + dc.getCurentPageFirst1());
 
-                    titleBar.setOnTouchListener(new HorizontallSeekTouchEventListener(onSeek, dc.getPageCount(), false));
+//                    titleBar.setOnTouchListener(new HorizontallSeekTouchEventListener(onSeek, dc.getPageCount(), false));
                     if (TxtUtils.isListEmpty(list)) {
 //                        TintUtil.setTintImageWithAlpha(onDocDontext, Color.LTGRAY);
                     }
@@ -1766,8 +1842,8 @@ public class DocumentWrapperUI {
 
                     updateSpeedLabel();
 
-                    DialogsPlaylist.dispalyPlaylist(a, dc);
-                    HypenPanelHelper.init(parentParent, dc);
+//                    DialogsPlaylist.dispalyPlaylist(a, dc);
+//                    HypenPanelHelper.init(parentParent, dc);
 
 
                     showPagesHelper();

@@ -3861,7 +3861,7 @@ public class DragingDialogs {
                 );
 
                 final List<Integer> doubleTapIDS = Arrays.asList(//
-                        AppState.DOUBLE_CLICK_AUTOSCROLL, //
+                        AppState.DOUBLE_CLICK_CONTIUOUSAUTOSCROLL, //
                         AppState.DOUBLE_CLICK_ADJUST_PAGE, //
                         AppState.DOUBLE_CLICK_CENTER_HORIZONTAL, //
                         AppState.DOUBLE_CLICK_ZOOM_IN_OUT, //

@@ -146,7 +146,7 @@ public class AppState {
     public final static int BOOKMARK_MODE_BY_DATE = 1;
     public final static int BOOKMARK_MODE_BY_BOOK = 2;
     // end
-    public final static int DOUBLE_CLICK_AUTOSCROLL = 0;
+    public final static int DOUBLE_CLICK_CONTIUOUSAUTOSCROLL = 0;
     public final static int DOUBLE_CLICK_ADJUST_PAGE = 1;
     public final static int DOUBLE_CLICK_NOTHING = 2;
     public final static int DOUBLE_CLICK_ZOOM_IN_OUT = 3;
@@ -427,8 +427,10 @@ public class AppState {
     public float editLineWidth = 3;
     @IgnoreHashCode
     public boolean isRememberMode = false;
+    public volatile boolean isContinuousAutoScroll = false;
+    public int continuousAutoScrollSpeed = 120;
     public volatile boolean isAutoScroll = false;
-    public int autoScrollSpeed = 120;
+    public int autoScrollInterval = 12;
     @IgnoreHashCode
     public boolean isScrollSpeedByVolumeKeys = false;
     @IgnoreHashCode

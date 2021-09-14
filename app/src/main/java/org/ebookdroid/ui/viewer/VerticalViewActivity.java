@@ -101,7 +101,7 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
             // AppState.get().setNextScreen(bs.isNextScreen);
             if (bs != null) {
                 // AppState.get().l = bs.l;
-                AppState.get().autoScrollSpeed = bs.s;
+                AppState.get().continuousAutoScrollSpeed = bs.s;
                 final boolean isTextFormat = ExtUtils.isTextFomat(bs.path);
                 AppSP.get().isCut = isTextFormat ? false : bs.sp; //important!!!
                 AppSP.get().isCrop = bs.cp;
@@ -231,8 +231,8 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
         super.onPause();
         LOG.d("onPause", this.getClass());
         getController().onPause();
-        needToRestore = AppState.get().isAutoScroll;
-        AppState.get().isAutoScroll = false;
+        needToRestore = AppState.get().isContinuousAutoScroll;
+        AppState.get().isContinuousAutoScroll = false;
         AppProfile.save(this);
         TempHolder.isSeaching = false;
         TempHolder.isActiveSpeedRead.set(false);
@@ -249,8 +249,8 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
         super.onStart();
         // Analytics.onStart(this);
         if (needToRestore) {
-            AppState.get().isAutoScroll = true;
-            getController().getListener().onAutoScroll();
+            AppState.get().isContinuousAutoScroll = true;
+            getController().getListener().onContinuousAutoScroll();
         }
 
     }

@@ -500,7 +500,7 @@ public abstract class HorizontalModeController extends DocumentController {
     }
 
     @Override
-    public void onAutoScroll() {
+    public void onContinuousAutoScroll() {
         throw new RuntimeException("Not Implemented");
 
     }
