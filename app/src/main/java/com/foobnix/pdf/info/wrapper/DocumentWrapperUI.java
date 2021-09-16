@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -885,12 +886,9 @@ public class DocumentWrapperUI {
     public void updateSpeedLabel() {
 
         Info info = OutlineHelper.getForamtingInfo(dc, true);
+        String pages = "Pages " + info.textMax + " of " + info.textPage;
+        tvPages.setText(pages);
 
-//        maxSeek.setText(info.textPage);
-//        currentSeek.setText(info.textMax);
-//
-//        currentSeek.setContentDescription(dc.getString(R.string.m_current_page) + " " + info.textMax);
-//        maxSeek.setContentDescription(dc.getString(R.string.m_total_pages) + " " + info.textPage);
     }
 
     public void updateUI() {
@@ -899,10 +897,10 @@ public class DocumentWrapperUI {
 
         updateSpeedLabel();
 
-//        seekBar.setOnSeekBarChangeListener(null);
-//        seekBar.setMax(max - 1);
-//        seekBar.setProgress(current - 1);
-//        seekBar.setOnSeekBarChangeListener(onSeek);
+        sbPages.setOnSeekBarChangeListener(null);
+        sbPages.setMax(max - 1);
+        sbPages.setProgress(current - 1);
+        sbPages.setOnSeekBarChangeListener(onSeek);
 //
 //        speedSeekBar.setOnSeekBarChangeListener(null);
 //        speedSeekBar.setMax(AppState.MAX_SPEED);
@@ -996,6 +994,8 @@ public class DocumentWrapperUI {
 
     public void showChapter() {
 
+        String chapterName = "(" + dc.getCurrentChapter() + ")";
+        tvChapterName.setText(chapterName);
         if (AppState.get().isShowPanelBookNameScrollMode) {
 //            if (TxtUtils.isNotEmpty(dc.getCurrentChapter())) {
 //                bookName.setText(bookTitle + " " + TxtUtils.LONG_DASH1 + " " + dc.getCurrentChapter().trim());
@@ -1045,6 +1045,10 @@ public class DocumentWrapperUI {
 
     }
 
+    private AppCompatTextView tvPages;
+    private AppCompatTextView tvChapterName;
+    private SeekBar sbPages;
+
     public void initUI(final Activity a) {
         this.a = a;
         quickBookmark = a.getString(R.string.fast_bookmark);
@@ -1060,6 +1064,19 @@ public class DocumentWrapperUI {
             }
             return false;
         });
+
+
+        /**
+         * Init pages info views
+         */
+        tvPages = a.findViewById(R.id.tvPages);
+        tvChapterName = a.findViewById(R.id.tvChapterName);
+        sbPages = a.findViewById(R.id.sbPages);
+        sbPages.setAccessibilityDelegate(new View.AccessibilityDelegate());
+
+
+        setupListeners();
+
 
 //        seekBar = (SeekBar) a.findViewById(R.id.seekBar);
 //        seekBar.setAccessibilityDelegate(new View.AccessibilityDelegate());
@@ -1229,27 +1246,8 @@ public class DocumentWrapperUI {
 //        TextView modeName = (TextView) a.findViewById(R.id.modeName);
 //        modeName.setText(AppState.get().nameVerticalMode);
 
-//        currentSeek = (TextView) a.findViewById(R.id.currentSeek);
-//        maxSeek = (TextView) a.findViewById(R.id.maxSeek);
 //        bookName = (TextView) a.findViewById(R.id.bookName);
 
-
-//        currentSeek.setOnLongClickListener(new OnLongClickListener() {
-//
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Dialogs.showDeltaPage(anchor, dc, dc.getCurentPageFirst1(), updateUIRunnable);
-//                return true;
-//            }
-//        });
-//        maxSeek.setOnLongClickListener(new OnLongClickListener() {
-//
-//            @Override
-//            public boolean onLongClick(View v) {
-//                Dialogs.showDeltaPage(anchor, dc, dc.getCurentPageFirst1(), updateUIRunnable);
-//                return true;
-//            }
-//        });
 
 //        View thumbnail = a.findViewById(R.id.thumbnail);
 //        thumbnail.setOnClickListener(onThumbnail);
@@ -1326,14 +1324,105 @@ public class DocumentWrapperUI {
 //            modeName.setText(AppState.get().nameMusicianMode);
         }
 
-//        currentSeek.setVisibility(View.GONE);
-//        maxSeek.setVisibility(View.GONE);
-//        seekBar.setVisibility(View.INVISIBLE);
 
         hideShowPrevNext();
         dc.initAnchor(anchor);
 
     }
+
+
+    private void setupListeners() {
+
+        /*binding.brightness.cvWhite.setOnClickListener {
+            isNightMode = true
+            toggleBlackTheme()
+            UiUtil.setColorResToDrawable(
+                    R.color.white,
+                    ContextCompat.getDrawable(applicationContext, R.drawable.ic_dark_mode)
+            )
+            UiUtil.setColorIntToDrawable(
+                    config.themeColor,
+                    ContextCompat.getDrawable(applicationContext, R.drawable.ic_light_mode)
+            )
+//            updateThemes()
+            setAudioPlayerBackground()
+        }
+
+        binding.brightness.cvBlack.setOnClickListener {
+            isNightMode = false
+            toggleBlackTheme()
+            UiUtil.setColorResToDrawable(
+                    R.color.black,
+                    ContextCompat.getDrawable(applicationContext, R.drawable.ic_light_mode)
+            )
+            UiUtil.setColorIntToDrawable(
+                    config.themeColor,
+                    ContextCompat.getDrawable(applicationContext, R.drawable.ic_dark_mode)
+            )
+            setAudioPlayerBackground()
+        }
+
+        binding.bottomMenus.buttonMenuGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) when (checkedId) {
+                R.id.btnChapters -> {
+                    clearMenuItemChecked()
+                    toggleStartDrawer()
+                }
+                R.id.btnBookmark -> {
+                    clearMenuItemChecked()
+                    showBookmarkHighlightAndNote()
+                }
+                R.id.btnFullScreen -> {
+                    hasFullScreen = !hasFullScreen
+                    fullScreenMode()
+                }
+                R.id.btnBrightness -> {
+                    showPageInfoOrOthers(hasBrightNess = true)
+                }
+                R.id.btnRotate -> {
+                    showPageInfoOrOthers(hasPageInfo = true)
+                    hasPortrait = !hasPortrait
+                    requestedOrientation = if (hasPortrait) {
+                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                    } else {
+                        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                    }
+                }
+                R.id.btnFontFamily -> {
+                    showPageInfoOrOthers(hasFontFamily = true)
+                }
+            } else {
+                Log.d(LOG_TAG, "setupListeners: ${checkedId == R.id.btnRotate}")
+                if (checkedId == R.id.btnRotate) {
+                    hasPortrait = true
+                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                } else {
+                    showPageInfoOrOthers(hasPageInfo = true)
+                }
+            }
+        }
+
+
+        binding.brightness.sbBrightness.setOnSeekBarChangeListener(object :
+        SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+//                config.currentBrightness = progress
+//                AppUtil.saveConfig(applicationContext, config)
+//                EventBus.getDefault().post(ReloadDataEvent())
+                val layoutParams = window.attributes // Get Params
+                layoutParams.screenBrightness = (progress / 255f) // Set Value
+                window.attributes = layoutParams
+
+                binding.brightness.tvCurrentBrightness.text = progress.toString()
+
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar) {}
+        })*/
+
+    }
+
 
     private SwitchMaterial autoScrollSwitch;
     private Slider autoScrollIntervalSlider;
@@ -1830,10 +1919,6 @@ public class DocumentWrapperUI {
                     if (dc.isTextFormat()) {
                         // TintUtil.setTintImage(lockUnlock, Color.LTGRAY);
                     }
-
-//                    currentSeek.setVisibility(View.VISIBLE);
-//                    maxSeek.setVisibility(View.VISIBLE);
-//                    seekBar.setVisibility(View.VISIBLE);
 
 
                     showHelp();
