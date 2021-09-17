@@ -23,6 +23,7 @@ import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -30,12 +31,14 @@ import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DividerItemDecoration;
 
 import com.foobnix.android.utils.Apps;
 import com.foobnix.android.utils.Dips;
 import com.foobnix.android.utils.IntegerResponse;
 import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
+import com.foobnix.android.utils.ResultResponse;
 import com.foobnix.android.utils.TxtUtils;
 import com.foobnix.android.utils.Vibro;
 import com.foobnix.model.AppSP;
@@ -49,7 +52,10 @@ import com.foobnix.pdf.info.OutlineHelper.Info;
 import com.foobnix.pdf.info.R;
 import com.foobnix.pdf.info.TintUtil;
 import com.foobnix.pdf.info.UiSystemUtils;
+import com.foobnix.pdf.info.adapters.ChapterAdapter;
+import com.foobnix.pdf.info.databinding.ActivityVerticalViewBinding;
 import com.foobnix.pdf.info.model.OutlineLinkWrapper;
+import com.foobnix.pdf.info.presentation.OutlineAdapter;
 import com.foobnix.pdf.info.view.AnchorHelper;
 import com.foobnix.pdf.info.view.BrightnessHelper;
 import com.foobnix.pdf.info.view.CustomSeek;
@@ -68,6 +74,7 @@ import com.foobnix.tts.TTSService;
 import com.foobnix.tts.TtsStatus;
 import com.foobnix.ui2.AppDB;
 import com.foobnix.ui2.MainTabs2;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
@@ -215,6 +222,7 @@ public class DocumentWrapperUI {
         }
     };
     Activity a;
+    ActivityVerticalViewBinding binding;
     String bookTitle;
     View overlay;
     Toolbar toolbar;
@@ -589,7 +597,7 @@ public class DocumentWrapperUI {
         @Override
         public void onClick(final View arg0) {
             AppSP.get().readingMode = AppState.READING_MODE_BOOK;
-            initUI(a);
+            initUI(a, binding);
             hideShow();
         }
     };
@@ -887,7 +895,7 @@ public class DocumentWrapperUI {
 
         Info info = OutlineHelper.getForamtingInfo(dc, true);
         String pages = "Pages " + info.textMax + " of " + info.textPage;
-        tvPages.setText(pages);
+        binding.pageInfo.tvPages.setText(pages);
 
     }
 
@@ -897,10 +905,10 @@ public class DocumentWrapperUI {
 
         updateSpeedLabel();
 
-        sbPages.setOnSeekBarChangeListener(null);
-        sbPages.setMax(max - 1);
-        sbPages.setProgress(current - 1);
-        sbPages.setOnSeekBarChangeListener(onSeek);
+        binding.pageInfo.sbPages.setOnSeekBarChangeListener(null);
+        binding.pageInfo.sbPages.setMax(max - 1);
+        binding.pageInfo.sbPages.setProgress(current - 1);
+        binding.pageInfo.sbPages.setOnSeekBarChangeListener(onSeek);
 //
 //        speedSeekBar.setOnSeekBarChangeListener(null);
 //        speedSeekBar.setMax(AppState.MAX_SPEED);
@@ -995,7 +1003,7 @@ public class DocumentWrapperUI {
     public void showChapter() {
 
         String chapterName = "(" + dc.getCurrentChapter() + ")";
-        tvChapterName.setText(chapterName);
+        binding.pageInfo.tvChapterName.setText(chapterName);
         if (AppState.get().isShowPanelBookNameScrollMode) {
 //            if (TxtUtils.isNotEmpty(dc.getCurrentChapter())) {
 //                bookName.setText(bookTitle + " " + TxtUtils.LONG_DASH1 + " " + dc.getCurrentChapter().trim());
@@ -1045,12 +1053,10 @@ public class DocumentWrapperUI {
 
     }
 
-    private AppCompatTextView tvPages;
-    private AppCompatTextView tvChapterName;
-    private SeekBar sbPages;
 
-    public void initUI(final Activity a) {
+    public void initUI(final Activity a, final ActivityVerticalViewBinding binding) {
         this.a = a;
+        this.binding = binding;
         quickBookmark = a.getString(R.string.fast_bookmark);
         toolbar = a.findViewById(R.id.titleToolbar);
         llPages = a.findViewById(R.id.llPages);
@@ -1066,13 +1072,7 @@ public class DocumentWrapperUI {
         });
 
 
-        /**
-         * Init pages info views
-         */
-        tvPages = a.findViewById(R.id.tvPages);
-        tvChapterName = a.findViewById(R.id.tvChapterName);
-        sbPages = a.findViewById(R.id.sbPages);
-        sbPages.setAccessibilityDelegate(new View.AccessibilityDelegate());
+        binding.pageInfo.sbPages.setAccessibilityDelegate(new View.AccessibilityDelegate());
 
 
         setupListeners();
@@ -1360,50 +1360,17 @@ public class DocumentWrapperUI {
                     ContextCompat.getDrawable(applicationContext, R.drawable.ic_dark_mode)
             )
             setAudioPlayerBackground()
-        }
+        }*/
 
-        binding.bottomMenus.buttonMenuGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (isChecked) when (checkedId) {
-                R.id.btnChapters -> {
-                    clearMenuItemChecked()
-                    toggleStartDrawer()
-                }
-                R.id.btnBookmark -> {
-                    clearMenuItemChecked()
-                    showBookmarkHighlightAndNote()
-                }
-                R.id.btnFullScreen -> {
-                    hasFullScreen = !hasFullScreen
-                    fullScreenMode()
-                }
-                R.id.btnBrightness -> {
-                    showPageInfoOrOthers(hasBrightNess = true)
-                }
-                R.id.btnRotate -> {
-                    showPageInfoOrOthers(hasPageInfo = true)
-                    hasPortrait = !hasPortrait
-                    requestedOrientation = if (hasPortrait) {
-                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                    } else {
-                        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-                    }
-                }
-                R.id.btnFontFamily -> {
-                    showPageInfoOrOthers(hasFontFamily = true)
-                }
-            } else {
-                Log.d(LOG_TAG, "setupListeners: ${checkedId == R.id.btnRotate}")
-                if (checkedId == R.id.btnRotate) {
-                    hasPortrait = true
-                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-                } else {
-                    showPageInfoOrOthers(hasPageInfo = true)
-                }
-            }
-        }
+        /**
+         * Bottom menu item selected listener
+         */
+
+        setupRecyclerViews();
+        setupBottomMenuItemListener();
 
 
-        binding.brightness.sbBrightness.setOnSeekBarChangeListener(object :
+        /*binding.brightness.sbBrightness.setOnSeekBarChangeListener(object :
         SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
 //                config.currentBrightness = progress
@@ -1420,6 +1387,102 @@ public class DocumentWrapperUI {
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })*/
+
+    }
+
+    private void setupBottomMenuItemListener() {
+
+        binding.bottomMenus.buttonMenuGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+            if (isChecked) switch (checkedId) {
+                case R.id.btnChapters: {
+                    clearMenuItemChecked();
+                    toggleStartDrawer();
+                }
+                case R.id.btnBookmark: {
+                    clearMenuItemChecked();
+//                    showBookmarkHighlightAndNote()
+                }
+                case R.id.btnFullScreen: {
+//                    hasFullScreen = !hasFullScreen
+//                    fullScreenMode()
+                }
+                case R.id.btnBrightness: {
+//                    showPageInfoOrOthers(hasBrightNess = true)
+                }
+                case R.id.btnRotate: {
+//                    showPageInfoOrOthers(hasPageInfo = true)
+//                    hasPortrait = !hasPortrait
+//                    requestedOrientation = if (hasPortrait) {
+//                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                    } else {
+//                        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+//                    }
+                }
+                case R.id.btnFontFamily: {
+//                    showPageInfoOrOthers(hasFontFamily = true)
+                }
+            }
+            else {
+//                if (checkedId == R.id.btnRotate) {
+//                    hasPortrait = true
+//                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+//                } else {
+//                    showPageInfoOrOthers(hasPageInfo = true)
+//                }
+            }
+        });
+
+    }
+
+
+    private void clearMenuItemChecked() {
+        binding.bottomMenus.buttonMenuGroup.clearChecked();
+    }
+
+
+    private void toggleStartDrawer() {
+        if (binding.mainDrawer.isDrawerOpen(GravityCompat.START)) {
+            binding.mainDrawer.closeDrawer(GravityCompat.START);
+        } else {
+            binding.mainDrawer.openDrawer(GravityCompat.START);
+            initAdapter();
+        }
+    }
+
+    private void setupRecyclerViews() {
+        binding.chaptersRecyclerView.setHasFixedSize(true);
+        binding.chaptersRecyclerView.addItemDecoration(
+                new DividerItemDecoration(
+                        a,
+                        DividerItemDecoration.VERTICAL
+                )
+        );
+    }
+
+    private ChapterAdapter chapterAdapter;
+
+    private void initAdapter() {
+        chapterAdapter = new ChapterAdapter();
+        binding.chaptersRecyclerView.setAdapter(chapterAdapter);
+        chapterAdapter.setOnClickListener(outline -> {
+            if (outline.targetPage != -1) {
+                int pageCount = dc.getPageCount();
+                if (outline.targetPage < 1 || outline.targetPage > pageCount) {
+                    Toast.makeText(anchor.getContext(), "no", Toast.LENGTH_SHORT).show();
+                } else {
+                    dc.onGoToPage(outline.targetPage);
+                }
+            }
+        });
+
+        dc.getOutline(outlines -> {
+            if (outlines != null && outlines.size() > 0) {
+                binding.chaptersRecyclerView.post(() -> {
+                    chapterAdapter.refreshOutlines(outlines);
+                });
+            }
+            return false;
+        }, true);
 
     }
 

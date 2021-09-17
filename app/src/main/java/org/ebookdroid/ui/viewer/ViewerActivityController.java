@@ -23,6 +23,7 @@ import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.pdf.info.ExtUtils;
 import com.foobnix.pdf.info.R;
+import com.foobnix.pdf.info.databinding.ActivityVerticalViewBinding;
 import com.foobnix.pdf.info.model.OutlineLinkWrapper;
 import com.foobnix.pdf.info.wrapper.DocumentController;
 import com.foobnix.pdf.info.wrapper.DocumentWrapperUI;
@@ -346,7 +347,7 @@ public class ViewerActivityController extends ActionController<VerticalViewActiv
 
     }
 
-    public void createWrapper(Activity a) {
+    public void createWrapper(Activity a, ActivityVerticalViewBinding binding) {
         try {
             String file = a.getIntent().getData().getPath();
 
@@ -365,7 +366,7 @@ public class ViewerActivityController extends ActionController<VerticalViewActiv
             LOG.e(e);
         }
 
-        wrapperControlls.initUI(a);
+        wrapperControlls.initUI(a, binding);
     }
 
     public void onResume() {
