@@ -3,11 +3,18 @@
  */
 package com.foobnix.pdf.info.wrapper;
 
+import static com.foobnix.pdf.info.view.BrightnessHelper.appBrightness;
+import static com.foobnix.pdf.info.view.BrightnessHelper.applyBrigtness;
+import static com.foobnix.pdf.info.view.BrightnessHelper.blueLightAlpha;
+import static com.foobnix.pdf.info.view.BrightnessHelper.getSystemBrigtnessInt;
+import static com.foobnix.pdf.info.view.BrightnessHelper.isEnableBlueFilter;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
@@ -1367,6 +1374,7 @@ public class DocumentWrapperUI {
          */
 
         setupRecyclerViews();
+        setupBrightNessAndThemeListener();
         setupBottomMenuItemListener();
 
 
@@ -1390,6 +1398,54 @@ public class DocumentWrapperUI {
 
     }
 
+    private final int minBrightNess = -100;
+    private final int maxBrightNess = 100;
+
+    private void setupBrightNessAndThemeListener() {
+
+
+        final int systemBrightNessInt = getSystemBrigtnessInt(a);
+
+        int current = 0;
+        if (appBrightness() == AppState.AUTO_BRIGTNESS) {
+            current = systemBrightNessInt;
+        } else {
+            current = isEnableBlueFilter() ? blueLightAlpha() * -1 : appBrightness();
+        }
+
+        int distance = maxBrightNess - minBrightNess;
+        binding.brightness.tvCurrentBrightness.setText(String.valueOf(current));
+        binding.brightness.sbBrightness.setMax(distance);
+        binding.brightness.sbBrightness.setProgress(current - minBrightNess);
+
+        applyBrigtness(a);
+        binding.brightness.sbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                int current = minBrightNess + progress;
+                binding.brightness.tvCurrentBrightness.setText(String.valueOf(current));
+
+                applyBrigtness(a);
+//                EventBus.getDefault().post(new MessegeBrightness(current));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    private boolean hasBrightNessUi = false;
+    private boolean hasPageInfoUi = true;
+    private boolean hasFontFamilyUi = false;
+    private boolean hasPortrait = false;
+
     private void setupBottomMenuItemListener() {
 
         binding.bottomMenus.buttonMenuGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
@@ -1407,31 +1463,56 @@ public class DocumentWrapperUI {
 //                    fullScreenMode()
                 }
                 case R.id.btnBrightness: {
-//                    showPageInfoOrOthers(hasBrightNess = true)
+                    hasBrightNessUi = true;
+                    hasPageInfoUi = false;
+                    hasFontFamilyUi = false;
+                    showPageInfoOrOthers();
                 }
                 case R.id.btnRotate: {
-//                    showPageInfoOrOthers(hasPageInfo = true)
-//                    hasPortrait = !hasPortrait
-//                    requestedOrientation = if (hasPortrait) {
-//                        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//                    } else {
-//                        ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
-//                    }
+                    hasBrightNessUi = false;
+                    hasPageInfoUi = true;
+                    hasFontFamilyUi = false;
+                    showPageInfoOrOthers();
+                    hasPortrait = !hasPortrait;
+                    a.setRequestedOrientation(
+                            hasPortrait ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                                    : ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
+                    );
                 }
                 case R.id.btnFontFamily: {
-//                    showPageInfoOrOthers(hasFontFamily = true)
+                    hasBrightNessUi = false;
+                    hasPageInfoUi = false;
+                    hasFontFamilyUi = true;
+                    showPageInfoOrOthers();
                 }
             }
             else {
-//                if (checkedId == R.id.btnRotate) {
-//                    hasPortrait = true
-//                    requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-//                } else {
-//                    showPageInfoOrOthers(hasPageInfo = true)
-//                }
+                if (checkedId == R.id.btnRotate) {
+                    hasPortrait = true;
+                    a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                } else {
+                    hasBrightNessUi = false;
+                    hasPageInfoUi = true;
+                    hasFontFamilyUi = false;
+                    showPageInfoOrOthers();
+                }
             }
         });
 
+    }
+
+    private void showPageInfoOrOthers() {
+        showOrHideUI(binding.pageInfo.getRoot(), hasPageInfoUi);
+        showOrHideUI(binding.brightness.getRoot(), hasBrightNessUi);
+        showOrHideUI(binding.fontFamily.getRoot(), hasFontFamilyUi);
+    }
+
+    private void showOrHideUI(View view, boolean isShow) {
+        if (isShow) {
+            view.setVisibility(View.VISIBLE);
+        } else {
+            view.setVisibility(View.GONE);
+        }
     }
 
 
@@ -1537,10 +1618,10 @@ public class DocumentWrapperUI {
 
         //Blue Light Filter
         blueLightFilterSlider = a.findViewById(R.id.blue_light_slider);
-        blueLightFilterSlider.setValue(BrightnessHelper.blueLightAlpha());
+        blueLightFilterSlider.setValue(blueLightAlpha());
         blueLightFilterSlider.addOnChangeListener((slider, value, fromUser) -> {
             if (fromUser) {
-                BrightnessHelper.blueLightAlpha((int) value);
+                blueLightAlpha((int) value);
             }
         });
     }
