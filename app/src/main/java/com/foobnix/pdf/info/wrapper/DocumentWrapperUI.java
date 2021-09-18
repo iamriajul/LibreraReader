@@ -3,6 +3,7 @@
  */
 package com.foobnix.pdf.info.wrapper;
 
+import android.animation.AnimatorInflater;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,7 +23,9 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -54,6 +57,7 @@ import com.foobnix.pdf.info.TintUtil;
 import com.foobnix.pdf.info.UiSystemUtils;
 import com.foobnix.pdf.info.adapters.ChapterAdapter;
 import com.foobnix.pdf.info.databinding.ActivityVerticalViewBinding;
+import com.foobnix.pdf.info.model.BookCSS;
 import com.foobnix.pdf.info.model.OutlineLinkWrapper;
 import com.foobnix.pdf.info.presentation.OutlineAdapter;
 import com.foobnix.pdf.info.view.AnchorHelper;
@@ -1524,13 +1528,15 @@ public class DocumentWrapperUI {
         //Blue Light Filter
         binding.settingLayout.blueLightSlider.setProgress(BrightnessHelper.blueLightAlpha());
         binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
+        TextView blueLightTextView = binding.settingLayout.blueLightTextView;
         binding.settingLayout.blueLightSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     BrightnessHelper.blueLightAlpha(progress);
                     BrightnessHelper.updateOverlay(binding.overlay);
-                    binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
+                    blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
+//                    binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
                 }
             }
 
@@ -1544,6 +1550,59 @@ public class DocumentWrapperUI {
 
             }
         });
+
+        binding.settingLayout.alignmentJustifySwitch.setChecked(BookCSS.get().textAlign == BookCSS.TEXT_ALIGN_JUSTIFY);
+        binding.settingLayout.alignmentJustifySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                BookCSS.get().textAlign = BookCSS.TEXT_ALIGN_JUSTIFY;
+            } else {
+                BookCSS.get().textAlign = BookCSS.TEXT_ALIGN_LEFT;
+            }
+        });
+        binding.settingLayout.lineHeightSlider.setValue(BookCSS.get().lineHeight);
+        binding.settingLayout.lineHeightSlider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                if (fromUser) {
+                    BookCSS.get().lineHeight = (int) value;
+                }
+            }
+        });
+        binding.settingLayout.hyphenationSwitch.setChecked(AppState.get().isDefaultHyphenLanguage);
+        binding.settingLayout.hyphenationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                AppState.get().isDefaultHyphenLanguage = isChecked;
+            }
+        });
+
+        binding.settingLayout.inactiveDimSwitch.setChecked(AppState.get().inactivityTime != 0);
+        binding.settingLayout.inactiveDimSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    setInactiveTime(binding.settingLayout.inactiveDimTimesRadioGroup.getCheckedRadioButtonId());
+                } else {
+                    AppState.get().inactivityTime = 0;
+                }
+            }
+        });
+        binding.settingLayout.inactiveDimTimesRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                setInactiveTime(checkedId);
+            }
+        });
+    }
+
+    private void setInactiveTime(int checkedId) {
+        if (checkedId == R.id.five_min_radio_btn) {
+            AppState.get().inactivityTime = 5;
+        } else if (checkedId == R.id.ten_min_radio_btn) {
+            AppState.get().inactivityTime = 10;
+        } else if (checkedId == R.id.fifteen_min_radio_btn) {
+            AppState.get().inactivityTime = 15;
+        }
     }
 
     private void toggleSettingDrawer() {
