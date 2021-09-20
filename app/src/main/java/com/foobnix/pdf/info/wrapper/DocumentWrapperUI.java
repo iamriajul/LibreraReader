@@ -37,11 +37,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
 import com.foobnix.android.utils.Apps;
@@ -92,6 +95,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.ebookdroid.BookType;
 import org.ebookdroid.LibreraApp;
+import org.ebookdroid.model.ReaderSettingConfig;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -233,7 +237,7 @@ public class DocumentWrapperUI {
 
         }
     };
-    Activity a;
+    AppCompatActivity a;
     ActivityVerticalViewBinding binding;
     String bookTitle;
     View overlay;
@@ -416,6 +420,10 @@ public class DocumentWrapperUI {
             BrightnessHelper.updateOverlay(overlay);
             showPagesHelper();
             hideShowPrevNext();
+            Log.d("DocumentWrapperUI", "run: " + AppState.get().isContinuousAutoScroll);
+            if (AppState.get().isContinuousAutoScroll) {
+                onContinuousAutoScrollClick();
+            }
         }
     };
     public View.OnClickListener onAutoScroll = new View.OnClickListener() {
@@ -1058,7 +1066,7 @@ public class DocumentWrapperUI {
     }
 
 
-    public void initUI(final Activity a, final ActivityVerticalViewBinding binding) {
+    public void initUI(final AppCompatActivity a, final ActivityVerticalViewBinding binding) {
         this.a = a;
         this.binding = binding;
         quickBookmark = a.getString(R.string.fast_bookmark);
@@ -1584,33 +1592,39 @@ public class DocumentWrapperUI {
     }
 
 
-    private void setupSettingsView(Activity a) {
-        binding.settingLayout.closeImageView.setOnClickListener(v -> toggleSettingDrawer());
+    private void setupSettingsView(AppCompatActivity a) {
+        binding.settingLayout.closeImageView.setOnClickListener(v -> {
+            toggleSettingDrawer();
+            Log.d("DocumentWrapperUI", "setupSettingsView: " + onRefresh);
+            if (onRefresh != null) onRefresh.run();
+        });
         //Auto Scroll Config
-        /*binding.settingLayout.autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
-        binding.settingLayout.autoScrollIntervalSlider.setEnabled(AppState.get().isAutoScroll);
-        binding.settingLayout.autoScrollIntervalSlider.setValue(AppState.get().autoScrollInterval);
+        binding.settingLayout.autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
+        binding.settingLayout.autoScrollCustomSeek.setEnabled(AppState.get().isAutoScroll);
+        binding.settingLayout.autoScrollCustomSeek.init(0, 120, AppState.get().autoScrollInterval, "s");
+        binding.settingLayout.autoScrollCustomSeek.setStep(5);
         binding.settingLayout.autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                binding.settingLayout.autoScrollIntervalSlider.setEnabled(isChecked)
+                binding.settingLayout.autoScrollCustomSeek.setEnabled(isChecked)
         );
-        binding.settingLayout.autoScrollIntervalSlider.addOnChangeListener((slider, value, fromUser) -> {
-            if (fromUser) {
-                AppState.get().autoScrollInterval = (int) value;
-            }
-        });*/
+        binding.settingLayout.autoScrollCustomSeek.setOnSeekChanged(result -> {
+            AppState.get().autoScrollInterval = result;
+            return false;
+        });
 
         //Continuous Auto Scoll Config
-        /*binding.settingLayout.continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
-        binding.settingLayout.contiguousAutoScrollIntervalSlider.setEnabled(AppState.get().isContinuousAutoScroll);
-        binding.settingLayout.contiguousAutoScrollIntervalSlider.setValue(AppState.get().continuousAutoScrollSpeed);
-        binding.settingLayout.continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                binding.settingLayout.contiguousAutoScrollIntervalSlider.setEnabled(isChecked)
+        binding.settingLayout.continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
+        binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(AppState.get().isContinuousAutoScroll);
+        binding.settingLayout.continuousAutoScrollCustomSeek.init(0, AppState.MAX_SPEED, AppState.get().continuousAutoScrollSpeed, "s");
+        binding.settingLayout.continuousAutoScrollCustomSeek.setStep(5);
+        binding.settingLayout.continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(isChecked);
+                    AppState.get().isContinuousAutoScroll = isChecked;
+                }
         );
-        binding.settingLayout.contiguousAutoScrollIntervalSlider.addOnChangeListener((slider, value, fromUser) -> {
-            if (fromUser) {
-                AppState.get().continuousAutoScrollSpeed = (int) value;
-            }
-        });*/
+        binding.settingLayout.continuousAutoScrollCustomSeek.setOnSeekChanged(result -> {
+            AppState.get().continuousAutoScrollSpeed = result;
+            return false;
+        });
 
         //Use volume key for page navigation
         binding.settingLayout.volumeToControlSwitch.setChecked(AppState.get().isUseVolumeKeys);
@@ -1619,29 +1633,13 @@ public class DocumentWrapperUI {
         );
 
         //Blue Light Filter
-        binding.settingLayout.blueLightSlider.setProgress(BrightnessHelper.blueLightAlpha());
-        binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
-//        TextView blueLightTextView = binding.settingLayout.blueLightTextView;
-        binding.settingLayout.blueLightSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        binding.settingLayout.blueLightSeekbar.init(0, 100, BrightnessHelper.blueLightAlpha(), "%");
+        binding.settingLayout.blueLightSeekbar.setOnSeekChanged(new IntegerResponse() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    BrightnessHelper.blueLightAlpha(progress);
-                    BrightnessHelper.updateOverlay(binding.overlay);
-                    binding.settingLayout.blueLightTextView.setText(progress + "%");
-//                    binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
-                }
-
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
+            public boolean onResultRecive(int result) {
+                BrightnessHelper.blueLightAlpha(result);
+                BrightnessHelper.updateOverlay(binding.overlay);
+                return false;
             }
         });
 
@@ -1654,14 +1652,10 @@ public class DocumentWrapperUI {
                 BookCSS.get().textAlign = BookCSS.TEXT_ALIGN_LEFT;
             }
         });
-        binding.settingLayout.lineHeightSlider.setValue(BookCSS.get().lineHeight);
-        binding.settingLayout.lineHeightSlider.addOnChangeListener(new Slider.OnChangeListener() {
-            @Override
-            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-                if (fromUser) {
-                    BookCSS.get().lineHeight = (int) value;
-                }
-            }
+        binding.settingLayout.lineHeightSeekbar.init(0, 30, BookCSS.get().lineHeight);
+        binding.settingLayout.lineHeightSeekbar.setOnSeekChanged(result -> {
+            BookCSS.get().lineHeight = result;
+            return false;
         });
         binding.settingLayout.hyphenationSwitch.setChecked(AppState.get().isDefaultHyphenLanguage);
         binding.settingLayout.hyphenationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -1995,11 +1989,12 @@ public class DocumentWrapperUI {
     }
 
     public void onContinuousAutoScrollClick() {
+        Log.d("DocumentWrapperUI", "onContinuousAutoScrollClick: " + dc.isVisibleDialog());
         if (dc.isVisibleDialog()) {
             return;
         }
 
-        AppState.get().isContinuousAutoScroll = !AppState.get().isContinuousAutoScroll;
+//        AppState.get().isContinuousAutoScroll = !AppState.get().isContinuousAutoScroll;
         // changeAutoScrollButton();
         dc.onContinuousAutoScroll();
         updateUI();

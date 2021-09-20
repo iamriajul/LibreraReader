@@ -72,67 +72,21 @@
             android:text="@string/auto_scroll_interval"
             android:textColor="@color/toggle_text_color"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/auto_scroll_interval_text_view"
+            app:layout_constraintBottom_toTopOf="@id/auto_scroll_custom_seek"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/auto_scroll_switch"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@string/auto_scroll_interval" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/auto_scroll_interval_text_view"
-            android:layout_width="wrap_content"
+        <com.foobnix.pdf.info.view.CustomSeek
+            android:id="@+id/auto_scroll_custom_seek"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:padding="8dp"
-            android:textColor="@color/toggle_text_color"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/continuous_auto_scroll_switch"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lbl_auto_scroll_interval_text_view"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="15s" />
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/lbl_auto_scroll_interval_text_view" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/reduce_auto_scroll_interval_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/auto_scroll_interval_text_view"
-            app:layout_constraintStart_toEndOf="@id/auto_scroll_interval_text_view"
-            app:layout_constraintTop_toTopOf="@id/auto_scroll_interval_text_view"
-            app:srcCompat="@drawable/ic_round_minus" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/auto_scroll_interval_slider"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:stepSize="1"
-            android:valueFrom="2"
-            android:valueTo="120"
-            app:labelBehavior="gone"
-            app:layout_constraintBottom_toBottomOf="@id/auto_scroll_interval_text_view"
-            app:layout_constraintEnd_toStartOf="@id/increase_auto_scroll_interval_image_view"
-            app:layout_constraintStart_toEndOf="@id/reduce_auto_scroll_interval_image_view"
-            app:layout_constraintTop_toTopOf="@id/auto_scroll_interval_text_view"
-            app:tickVisible="false" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/increase_auto_scroll_interval_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/auto_scroll_interval_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/auto_scroll_interval_slider"
-            app:layout_constraintTop_toTopOf="@id/auto_scroll_interval_text_view"
-            app:srcCompat="@drawable/ic_round_plus" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/lbl_enable_continuous_auto_scroll_text_view"
@@ -154,69 +108,20 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/round_off_white_bg"
             android:minHeight="27dp"
-            app:layout_constraintBottom_toTopOf="@id/contiguous_auto_scroll_interval_text_view"
+            app:layout_constraintBottom_toTopOf="@id/continuous_auto_scroll_custom_seek"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/auto_scroll_interval_text_view"
+            app:layout_constraintTop_toBottomOf="@id/auto_scroll_custom_seek"
             app:layout_constraintVertical_chainStyle="packed"
             app:thumbTint="@color/switch_thumb_tint_color"
             app:trackTint="@color/off_white" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/contiguous_auto_scroll_interval_text_view"
-            android:layout_width="wrap_content"
+        <com.foobnix.pdf.info.view.CustomSeek
+            android:id="@+id/continuous_auto_scroll_custom_seek"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:padding="8dp"
-            android:textColor="@color/toggle_text_color"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/whole_page_switch"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/continuous_auto_scroll_switch"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="15s" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/reduce_contiguous_auto_scroll_interval_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:layout_constraintStart_toEndOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:layout_constraintTop_toTopOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:srcCompat="@drawable/ic_round_minus" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/contiguous_auto_scroll_interval_slider"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:stepSize="5"
-            android:value="5"
-            android:valueFrom="0"
-            android:valueTo="150"
-            app:labelBehavior="gone"
-            app:layout_constraintBottom_toBottomOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:layout_constraintEnd_toStartOf="@id/increase_contiguous_auto_scroll_interval_image_view"
-            app:layout_constraintStart_toEndOf="@id/reduce_contiguous_auto_scroll_interval_image_view"
-            app:layout_constraintTop_toTopOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:tickVisible="false" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/increase_contiguous_auto_scroll_interval_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/contiguous_auto_scroll_interval_slider"
-            app:layout_constraintTop_toTopOf="@id/contiguous_auto_scroll_interval_text_view"
-            app:srcCompat="@drawable/ic_round_plus" />
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/lbl_enable_continuous_auto_scroll_text_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/lbl_whole_page_text_view"
@@ -241,7 +146,7 @@
             android:minHeight="27dp"
             app:layout_constraintBottom_toTopOf="@id/volume_to_control_switch"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/contiguous_auto_scroll_interval_text_view"
+            app:layout_constraintTop_toBottomOf="@id/continuous_auto_scroll_custom_seek"
             app:layout_constraintVertical_chainStyle="packed"
             app:thumbTint="@color/switch_thumb_tint_color"
             app:trackTint="@color/off_white" />
@@ -312,64 +217,20 @@
             android:text="@string/blue_light_filter"
             android:textColor="@color/toggle_text_color"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/blue_light_text_view"
+            app:layout_constraintBottom_toTopOf="@id/blue_light_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/swipe_brightness_switch"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@string/blue_light_filter" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/blue_light_text_view"
-            android:layout_width="wrap_content"
+        <com.foobnix.pdf.info.view.CustomSeek
+            android:id="@+id/blue_light_seekbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:padding="8dp"
-            android:textColor="@color/toggle_text_color"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/inactive_dim_switch"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lbl_blue_light_text_view"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="15s" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/reduce_blue_light_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/blue_light_text_view"
-            app:layout_constraintStart_toEndOf="@id/blue_light_text_view"
-            app:layout_constraintTop_toTopOf="@id/blue_light_text_view"
-            app:srcCompat="@drawable/ic_round_minus" />
-
-        <SeekBar
-            android:id="@+id/blue_light_slider"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:max="100"
-            android:progress="5"
-            app:layout_constraintBottom_toBottomOf="@id/blue_light_text_view"
-            app:layout_constraintEnd_toStartOf="@id/increase_blue_light_image_view"
-            app:layout_constraintStart_toEndOf="@id/reduce_blue_light_image_view"
-            app:layout_constraintTop_toTopOf="@id/blue_light_text_view" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/increase_blue_light_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/blue_light_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/blue_light_slider"
-            app:layout_constraintTop_toTopOf="@id/blue_light_text_view"
-            app:srcCompat="@drawable/ic_round_plus" />
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/lbl_blue_light_text_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/lbl_inactive_dim_text_view"
@@ -395,7 +256,7 @@
             android:minHeight="27dp"
             app:layout_constraintBottom_toTopOf="@id/inactive_dim_times_radio_group"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/blue_light_text_view"
+            app:layout_constraintTop_toBottomOf="@id/blue_light_seekbar"
             app:layout_constraintVertical_chainStyle="packed"
             app:thumbTint="@color/switch_thumb_tint_color"
             app:trackTint="@color/off_white" />
@@ -505,68 +366,20 @@
             android:text="@string/adjust_line_height"
             android:textColor="@color/toggle_text_color"
             android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/line_height_text_view"
+            app:layout_constraintBottom_toTopOf="@id/line_height_seekbar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/alignment_justify_switch"
             app:layout_constraintVertical_chainStyle="packed"
             tools:text="@string/adjust_line_height" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/line_height_text_view"
-            android:layout_width="wrap_content"
+        <com.foobnix.pdf.info.view.CustomSeek
+            android:id="@+id/line_height_seekbar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:padding="8dp"
-            android:textColor="@color/toggle_text_color"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toTopOf="@id/hyphenation_switch"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/lbl_line_height_text_view"
-            app:layout_constraintVertical_chainStyle="packed"
-            tools:text="15s" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/reduce_line_height_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/line_height_text_view"
-            app:layout_constraintStart_toEndOf="@id/line_height_text_view"
-            app:layout_constraintTop_toTopOf="@id/line_height_text_view"
-            app:srcCompat="@drawable/ic_round_minus" />
-
-        <com.google.android.material.slider.Slider
-            android:id="@+id/line_height_slider"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:stepSize="1"
-            android:value="13"
-            android:valueFrom="0"
-            android:valueTo="30"
-            app:labelBehavior="gone"
-            app:layout_constraintBottom_toBottomOf="@id/line_height_text_view"
-            app:layout_constraintEnd_toStartOf="@id/increase_line_height_image_view"
-            app:layout_constraintStart_toEndOf="@id/reduce_line_height_image_view"
-            app:layout_constraintTop_toTopOf="@id/line_height_text_view"
-            app:tickVisible="false" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/increase_line_height_image_view"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:foreground="?attr/selectableItemBackground"
-            android:scaleType="center"
-            app:layout_constraintBottom_toBottomOf="@id/line_height_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/line_height_slider"
-            app:layout_constraintTop_toTopOf="@id/line_height_text_view"
-            app:srcCompat="@drawable/ic_round_plus" />
+            android:layout_marginEnd="16dp"
+            app:layout_constraintTop_toBottomOf="@id/lbl_line_height_text_view" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/lbl_hyphenation_text_view"
@@ -592,11 +405,10 @@
             android:minHeight="27dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/line_height_text_view"
+            app:layout_constraintTop_toBottomOf="@id/line_height_seekbar"
             app:layout_constraintVertical_chainStyle="packed"
             app:thumbTint="@color/switch_thumb_tint_color"
             app:trackTint="@color/off_white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
-

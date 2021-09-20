@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fontSizeLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
-    android:gravity="center_vertical" >
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/name"
@@ -23,18 +25,10 @@
         android:layout_height="match_parent"
         android:layout_weight="0"
         android:ems="2"
-        android:singleLine="true"
         android:gravity="center"
         android:padding="1dip"
+        android:singleLine="true"
         android:text="0" />
-
-    <SeekBar
-        android:id="@+id/seek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_weight="1"
-        android:saveEnabled="false" />
 
     <ImageView
         android:id="@+id/minus"
@@ -42,8 +36,19 @@
         android:layout_height="35dip"
         android:layout_weight="0"
         android:padding="10dip"
-        android:src="@drawable/glyphicons_434_minus"
-        android:tint="@color/tint_gray" />
+        app:srcCompat="@drawable/ic_round_minus" />
+
+    <SeekBar
+        android:id="@+id/seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:progressTint="#66000000"
+        android:saveEnabled="false"
+        android:tickMarkTint="#17CE3C"
+        tools:progess="12" />
+
 
     <ImageView
         android:id="@+id/plus"
@@ -52,7 +57,6 @@
         android:layout_marginRight="10dip"
         android:layout_weight="0"
         android:padding="10dip"
-        android:src="@drawable/glyphicons_433_plus"
-        android:tint="@color/tint_gray" />
+        app:srcCompat="@drawable/ic_round_plus" />
 
 </LinearLayout>

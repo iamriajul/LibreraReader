@@ -14,9 +14,19 @@ import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.RadioGroup;
+import android.widget.SeekBar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.foobnix.android.utils.Dips;
+import com.foobnix.android.utils.IntegerResponse;
 import com.foobnix.android.utils.Intents;
 import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
@@ -39,8 +49,10 @@ import com.foobnix.tts.TTSNotification;
 import com.foobnix.ui2.FileMetaCore;
 import com.foobnix.ui2.MainTabs2;
 import com.foobnix.ui2.MyContextWrapper;
+import com.google.android.material.slider.Slider;
 
 import org.ebookdroid.common.settings.SettingsManager;
+import org.ebookdroid.model.ReaderSettingConfig;
 import org.ebookdroid.ui.viewer.viewers.PdfSurfaceView;
 import org.emdev.ui.AbstractActionActivity;
 
@@ -136,7 +148,6 @@ public class VerticalViewActivity extends AbstractActionActivity<VerticalViewAct
         }
         binding = ActivityVerticalViewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         if (!Android6.canWrite(this)) {
             Android6.checkPermissions(this, true);
             return;
