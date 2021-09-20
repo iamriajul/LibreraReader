@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipToPadding="false">
@@ -195,9 +195,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:stepSize="5"
+            android:value="5"
             android:valueFrom="0"
             android:valueTo="150"
-            android:value="5"
             app:labelBehavior="gone"
             app:layout_constraintBottom_toBottomOf="@id/contiguous_auto_scroll_interval_text_view"
             app:layout_constraintEnd_toStartOf="@id/increase_contiguous_auto_scroll_interval_image_view"
@@ -347,15 +347,12 @@
             app:layout_constraintTop_toTopOf="@id/blue_light_text_view"
             app:srcCompat="@drawable/ic_round_minus" />
 
-        <com.google.android.material.slider.Slider
+        <SeekBar
             android:id="@+id/blue_light_slider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:stepSize="5"
-            android:value="5"
-            android:valueFrom="0"
-            android:valueTo="100"
-            app:labelBehavior="gone"
+            android:max="100"
+            android:progress="5"
             app:layout_constraintBottom_toBottomOf="@id/blue_light_text_view"
             app:layout_constraintEnd_toStartOf="@id/increase_blue_light_image_view"
             app:layout_constraintStart_toEndOf="@id/reduce_blue_light_image_view"
@@ -548,10 +545,10 @@
             android:id="@+id/line_height_slider"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:stepSize="5"
+            android:stepSize="1"
+            android:value="13"
             android:valueFrom="0"
-            android:value="5"
-            android:valueTo="100"
+            android:valueTo="30"
             app:labelBehavior="gone"
             app:layout_constraintBottom_toBottomOf="@id/line_height_text_view"
             app:layout_constraintEnd_toStartOf="@id/increase_line_height_image_view"
@@ -604,3 +601,4 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+

@@ -553,9 +553,9 @@ public class AppState {
     @IgnoreHashCode
     public int blueLightAlphaNight = 30;
     @IgnoreHashCode
-    public boolean isEnableBlueFilter = false;
+    public boolean isEnableBlueFilter = true;
     @IgnoreHashCode
-    public boolean isEnableBlueFilterNight = false;
+    public boolean isEnableBlueFilterNight = true;
     public boolean proxyEnable = false;
     public String proxyServer = "";
     public int proxyPort = 0;
