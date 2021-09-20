@@ -1066,7 +1066,7 @@ public class DocumentWrapperUI {
         llPages = a.findViewById(R.id.llPages);
         mainDrawer = a.findViewById(R.id.main_drawer);
         mainDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-//        setupSettingsView(binding, a);
+        setupSettingsView(a);
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.action_more) {
                 toggleSettingDrawer();
@@ -1584,10 +1584,10 @@ public class DocumentWrapperUI {
     }
 
 
-    private void setupSettingsView(ActivityVerticalViewBinding binding, Activity a) {
+    private void setupSettingsView(Activity a) {
         binding.settingLayout.closeImageView.setOnClickListener(v -> toggleSettingDrawer());
         //Auto Scroll Config
-        binding.settingLayout.autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
+        /*binding.settingLayout.autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
         binding.settingLayout.autoScrollIntervalSlider.setEnabled(AppState.get().isAutoScroll);
         binding.settingLayout.autoScrollIntervalSlider.setValue(AppState.get().autoScrollInterval);
         binding.settingLayout.autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
@@ -1597,10 +1597,10 @@ public class DocumentWrapperUI {
             if (fromUser) {
                 AppState.get().autoScrollInterval = (int) value;
             }
-        });
+        });*/
 
         //Continuous Auto Scoll Config
-        binding.settingLayout.continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
+        /*binding.settingLayout.continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
         binding.settingLayout.contiguousAutoScrollIntervalSlider.setEnabled(AppState.get().isContinuousAutoScroll);
         binding.settingLayout.contiguousAutoScrollIntervalSlider.setValue(AppState.get().continuousAutoScrollSpeed);
         binding.settingLayout.continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
@@ -1610,7 +1610,7 @@ public class DocumentWrapperUI {
             if (fromUser) {
                 AppState.get().continuousAutoScrollSpeed = (int) value;
             }
-        });
+        });*/
 
         //Use volume key for page navigation
         binding.settingLayout.volumeToControlSwitch.setChecked(AppState.get().isUseVolumeKeys);
@@ -1619,23 +1619,19 @@ public class DocumentWrapperUI {
         );
 
         //Blue Light Filter
-        blueLightFilterSlider = a.findViewById(R.id.blue_light_slider);
-        blueLightFilterSlider.setValue(blueLightAlpha());
-        blueLightFilterSlider.addOnChangeListener((slider, value, fromUser) -> {
-            if (fromUser) {
-                blueLightAlpha((int) value);
         binding.settingLayout.blueLightSlider.setProgress(BrightnessHelper.blueLightAlpha());
         binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
-        TextView blueLightTextView = binding.settingLayout.blueLightTextView;
+//        TextView blueLightTextView = binding.settingLayout.blueLightTextView;
         binding.settingLayout.blueLightSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
                     BrightnessHelper.blueLightAlpha(progress);
                     BrightnessHelper.updateOverlay(binding.overlay);
-                    blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
+                    binding.settingLayout.blueLightTextView.setText(progress + "%");
 //                    binding.settingLayout.blueLightTextView.setText(BrightnessHelper.blueLightAlpha() + "%");
                 }
+
             }
 
             @Override
@@ -1648,6 +1644,7 @@ public class DocumentWrapperUI {
 
             }
         });
+
 
         binding.settingLayout.alignmentJustifySwitch.setChecked(BookCSS.get().textAlign == BookCSS.TEXT_ALIGN_JUSTIFY);
         binding.settingLayout.alignmentJustifySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {

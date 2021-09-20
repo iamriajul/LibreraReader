@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipToPadding="false">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -356,8 +355,7 @@
             app:layout_constraintBottom_toBottomOf="@id/blue_light_text_view"
             app:layout_constraintEnd_toStartOf="@id/increase_blue_light_image_view"
             app:layout_constraintStart_toEndOf="@id/reduce_blue_light_image_view"
-            app:layout_constraintTop_toTopOf="@id/blue_light_text_view"
-            app:tickVisible="false" />
+            app:layout_constraintTop_toTopOf="@id/blue_light_text_view" />
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/increase_blue_light_image_view"
