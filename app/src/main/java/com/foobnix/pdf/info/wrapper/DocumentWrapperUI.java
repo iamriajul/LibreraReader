@@ -4,6 +4,7 @@
 package com.foobnix.pdf.info.wrapper;
 
 import static com.foobnix.pdf.info.view.BrightnessHelper.appBrightness;
+import static com.foobnix.pdf.info.view.BrightnessHelper.applyBrightNess;
 import static com.foobnix.pdf.info.view.BrightnessHelper.applyBrigtness;
 import static com.foobnix.pdf.info.view.BrightnessHelper.blueLightAlpha;
 import static com.foobnix.pdf.info.view.BrightnessHelper.getSystemBrigtnessInt;
@@ -904,6 +905,8 @@ public class DocumentWrapperUI {
         String pages = "Pages " + info.textMax + " of " + info.textPage;
         binding.pageInfo.tvPages.setText(pages);
 
+        showChapter();
+
     }
 
     public void updateUI() {
@@ -1009,23 +1012,13 @@ public class DocumentWrapperUI {
 
     public void showChapter() {
 
-        String chapterName = "(" + dc.getCurrentChapter() + ")";
-        binding.pageInfo.tvChapterName.setText(chapterName);
-        if (AppState.get().isShowPanelBookNameScrollMode) {
-//            if (TxtUtils.isNotEmpty(dc.getCurrentChapter())) {
-//                bookName.setText(bookTitle + " " + TxtUtils.LONG_DASH1 + " " + dc.getCurrentChapter().trim());
-//                LOG.d("bookName.setText(1)", bookTitle);
-//            } else {
-//                bookName.setText(bookTitle);
-//                LOG.d("bookName.setText(2)", bookTitle);
-//            }
-//            bookName.setText(bookTitle);
-            //bookName.setVisibility(View.VISIBLE);
+        String chapterName = "";
+        if (TxtUtils.isNotEmpty(dc.getCurrentChapter())) {
+            chapterName = dc.getCurrentChapter();
         } else {
-            //bookName.setVisibility(View.GONE);
-//            bookName.setText("");
+            chapterName = bookTitle;
         }
-
+        binding.pageInfo.tvChapterName.setText(chapterName);
 
     }
 
@@ -1069,7 +1062,7 @@ public class DocumentWrapperUI {
         llPages = a.findViewById(R.id.llPages);
         mainDrawer = a.findViewById(R.id.main_drawer);
         mainDrawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        setupSettingsView(a);
+//        setupSettingsView(a);
         toolbar.setOnMenuItemClickListener(item -> {
             if (item.getItemId() == R.id.action_more) {
                 toggleSettingDrawer();
@@ -1398,8 +1391,8 @@ public class DocumentWrapperUI {
 
     }
 
-    private final int minBrightNess = -100;
-    private final int maxBrightNess = 100;
+
+    private final int maxBrightNess = 255;
 
     private void setupBrightNessAndThemeListener() {
 
@@ -1413,20 +1406,23 @@ public class DocumentWrapperUI {
             current = isEnableBlueFilter() ? blueLightAlpha() * -1 : appBrightness();
         }
 
-        int distance = maxBrightNess - minBrightNess;
         binding.brightness.tvCurrentBrightness.setText(String.valueOf(current));
-        binding.brightness.sbBrightness.setMax(distance);
-        binding.brightness.sbBrightness.setProgress(current - minBrightNess);
+        binding.brightness.sbBrightness.setMax(maxBrightNess);
+        binding.brightness.sbBrightness.setProgress(current);
 
-        applyBrigtness(a);
+        WindowManager.LayoutParams layoutParams = a.getWindow().getAttributes();
+        layoutParams.screenBrightness = current;
+        a.getWindow().setAttributes(layoutParams);
+
         binding.brightness.sbBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int current = minBrightNess + progress;
-                binding.brightness.tvCurrentBrightness.setText(String.valueOf(current));
 
-                applyBrigtness(a);
-//                EventBus.getDefault().post(new MessegeBrightness(current));
+                WindowManager.LayoutParams layoutParams = a.getWindow().getAttributes(); // Get Params
+                layoutParams.screenBrightness = (progress / 255f); // Set Value
+                a.getWindow().setAttributes(layoutParams);
+                binding.brightness.tvCurrentBrightness.setText(String.valueOf(progress));
+
             }
 
             @Override
@@ -1454,20 +1450,24 @@ public class DocumentWrapperUI {
                     clearMenuItemChecked();
                     toggleStartDrawer();
                 }
+                break;
                 case R.id.btnBookmark: {
                     clearMenuItemChecked();
 //                    showBookmarkHighlightAndNote()
                 }
+                break;
                 case R.id.btnFullScreen: {
 //                    hasFullScreen = !hasFullScreen
 //                    fullScreenMode()
                 }
+                break;
                 case R.id.btnBrightness: {
                     hasBrightNessUi = true;
                     hasPageInfoUi = false;
                     hasFontFamilyUi = false;
                     showPageInfoOrOthers();
                 }
+                break;
                 case R.id.btnRotate: {
                     hasBrightNessUi = false;
                     hasPageInfoUi = true;
@@ -1479,26 +1479,32 @@ public class DocumentWrapperUI {
                                     : ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR
                     );
                 }
+                break;
                 case R.id.btnFontFamily: {
                     hasBrightNessUi = false;
                     hasPageInfoUi = false;
                     hasFontFamilyUi = true;
                     showPageInfoOrOthers();
                 }
+                break;
             }
             else {
                 if (checkedId == R.id.btnRotate) {
                     hasPortrait = true;
                     a.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 } else {
-                    hasBrightNessUi = false;
                     hasPageInfoUi = true;
+                    hasBrightNessUi = false;
                     hasFontFamilyUi = false;
                     showPageInfoOrOthers();
                 }
             }
         });
 
+        hasBrightNessUi = false;
+        hasPageInfoUi = true;
+        hasFontFamilyUi = false;
+        showPageInfoOrOthers();
     }
 
     private void showPageInfoOrOthers() {
@@ -1518,6 +1524,10 @@ public class DocumentWrapperUI {
 
     private void clearMenuItemChecked() {
         binding.bottomMenus.buttonMenuGroup.clearChecked();
+        hasBrightNessUi = false;
+        hasPageInfoUi = true;
+        hasFontFamilyUi = false;
+        showPageInfoOrOthers();
     }
 
 
@@ -1546,6 +1556,7 @@ public class DocumentWrapperUI {
         chapterAdapter = new ChapterAdapter();
         binding.chaptersRecyclerView.setAdapter(chapterAdapter);
         chapterAdapter.setOnClickListener(outline -> {
+            toggleStartDrawer();
             if (outline.targetPage != -1) {
                 int pageCount = dc.getPageCount();
                 if (outline.targetPage < 1 || outline.targetPage > pageCount) {
@@ -1554,6 +1565,7 @@ public class DocumentWrapperUI {
                     dc.onGoToPage(outline.targetPage);
                 }
             }
+
         });
 
         dc.getOutline(outlines -> {

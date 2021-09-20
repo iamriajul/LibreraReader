@@ -49,6 +49,6 @@ public class ChapterAdapter extends RecyclerView.Adapter<ChapterViewHolder> {
 
     @Override
     public int getItemCount() {
-        return outlines.size();
+        return outlines == null ? 0 : outlines.size();
     }
 }

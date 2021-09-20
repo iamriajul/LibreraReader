@@ -81,6 +81,17 @@ public class BrightnessHelper {
         }
     }
 
+
+    public static void applyBrightNess(final Activity a, int current) {
+        try {
+            final WindowManager.LayoutParams lp = a.getWindow().getAttributes();
+            lp.screenBrightness = current;
+            a.getWindow().setAttributes(lp);
+        } catch (Exception e) {
+            LOG.e(e);
+        }
+    }
+
     public static int getSystemBrigtnessInt(final Activity a) {
         try {
             int brightInt = android.provider.Settings.System.getInt(a.getContentResolver(), android.provider.Settings.System.SCREEN_BRIGHTNESS);
@@ -137,7 +148,7 @@ public class BrightnessHelper {
             textView.setText(textView.getContext().getString(R.string.system_brightness));
 
         } else if (value < 0) {
-            isEnableBlueFilter (true);
+            isEnableBlueFilter(true);
             blueLightAlpha(Math.abs(value));
             appBrightness(0);
 
