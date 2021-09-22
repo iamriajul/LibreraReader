@@ -170,6 +170,7 @@ public class BrightnessHelper {
         if (overlay == null) {
             return;
         }
+        LOG.d("UpdateOverlay: " + isEnableBlueFilter());
         if (isEnableBlueFilter()) {
             overlay.setVisibility(View.VISIBLE);
             int alpha;

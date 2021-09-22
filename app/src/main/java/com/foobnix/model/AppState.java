@@ -19,6 +19,8 @@ import com.foobnix.opds.SamlibOPDS;
 import com.foobnix.pdf.info.AppsConfig;
 import com.foobnix.pdf.info.R;
 import com.foobnix.pdf.info.Urls;
+import com.foobnix.pdf.info.model.BookCSS;
+import com.foobnix.pdf.info.view.BrightnessHelper;
 import com.foobnix.pdf.info.widget.DialogTranslateFromTo;
 import com.foobnix.pdf.info.wrapper.MagicHelper;
 import com.foobnix.ui2.AppDB;
@@ -290,8 +292,6 @@ public class AppState {
     public int inactivityTime = 5;
     @IgnoreHashCode
     public boolean wholePageAtATime = false;
-    @IgnoreHashCode
-    public boolean swipeToControlBrightness = false;
     @IgnoreHashCode
     public boolean shakeToTakeScreenShort = false;
     @IgnoreHashCode
@@ -727,16 +727,31 @@ public class AppState {
         }
 
         IO.readObj(AppProfile.syncState, instance);
-
+        config = AppProfile.getSavedConfig(a);
+        if (config == null) return;
+        BookCSS.get().textAlign = config.getAlignment();
+        BookCSS.get().lineHeight = config.getLineHeight();
+        isAutoScroll = config.isAutoScroll();
+        autoScrollInterval = config.getAutoScrollInterval();
+        isContinuousAutoScroll = config.isContinuousAutoScroll();
+        continuousAutoScrollSpeed = config.getContinuousAutoScrollSpeed();
+        wholePageAtATime = config.isWholePageAtATime();
+        isUseVolumeKeys = config.isUseVolumeKeyToNavigate();
+        isBrighrnessEnable = config.isSwipeToControlBrightness();
+        BrightnessHelper.isEnableBlueFilter(true);
+        inactivityTime = config.getInactiveTime();
+        shakeToTakeScreenShort = config.isShakeToTakeScreenShort();
+        isDefaultHyphenLanguage = config.isHyphenation();
     }
 
     public void save(final Context a) {
         if (a == null) {
             return;
         }
-
+        LOG.d("SaveAppState outside condition");
         int currentHash = Objects.hashCode(instance, false);
         if (currentHash != instance.hashCode) {
+            LOG.d("SaveAppState inside condition");
             hashCode = currentHash;
             IO.writeObj(AppProfile.syncState, instance);
         }

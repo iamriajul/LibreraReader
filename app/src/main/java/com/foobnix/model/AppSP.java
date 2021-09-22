@@ -24,7 +24,7 @@ public class AppSP {
     public int lastBookHeight = 0;
     public int lastFontSize = 0;
     public String lastBookLang = "";
-    public boolean isLocked = false;
+    public boolean isLocked = true;
     public boolean isFirstTimeVertical = true;
     public boolean isFirstTimeHorizontal = true;
     public int readingMode = AppState.READING_MODE_BOOK;
@@ -40,8 +40,8 @@ public class AppSP {
     public boolean isEnableSync;
     public String syncRootID;
 
-    public String currentProfile = BuildConfig.DEBUG ? "BETA" : "Librera";
-    public String rootPath = new File(Environment.getExternalStorageDirectory(), "Librera").toString();
+    public String currentProfile = BuildConfig.DEBUG ? "BETA" : "librera";
+    public String rootPath = new File(Environment.getExternalStorageDirectory(), "librera").toString();
 
     transient SharedPreferences sp;
 
@@ -50,6 +50,7 @@ public class AppSP {
     }
 
     public void init(Context c) {
+        rootPath = new File(c.getFilesDir(), "librera").toString();
         sp = c.getSharedPreferences("AppTemp", Context.MODE_PRIVATE);
         load();
     }

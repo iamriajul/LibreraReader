@@ -47,6 +47,7 @@ import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
 import com.foobnix.android.utils.TxtUtils;
 import com.foobnix.android.utils.Vibro;
+import com.foobnix.model.AppProfile;
 import com.foobnix.model.AppSP;
 import com.foobnix.model.AppState;
 import com.foobnix.pdf.info.AppsConfig;
@@ -1243,9 +1244,8 @@ public class DocumentWrapperUI {
 //        bookmarks.setOnClickListener(onBookmarks);
 //        bookmarks.setOnLongClickListener(onBookmarksLong);
 
-//        toastBrightnessText = (TextView) a.findViewById(R.id.toastBrightnessText);
-//        toastBrightnessText.setVisibility(View.GONE);
-//        TintUtil.setDrawableTint(toastBrightnessText.getCompoundDrawables()[0], Color.WHITE);
+        binding.toastBrightnessText.setVisibility(View.GONE);
+        TintUtil.setDrawableTint(binding.toastBrightnessText.getCompoundDrawables()[0], Color.WHITE);
 
 //        TextView modeName = (TextView) a.findViewById(R.id.modeName);
 //        modeName.setText(AppState.get().nameVerticalMode);
@@ -1599,10 +1599,12 @@ public class DocumentWrapperUI {
         binding.settingLayout.autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     binding.settingLayout.autoScrollCustomSeek.setEnabled(isChecked);
                     config.setAutoScroll(isChecked);
+                    AppProfile.save(a);
                 }
         );
         binding.settingLayout.autoScrollCustomSeek.setOnSeekChanged(result -> {
             config.setAutoScrollInterval(result);
+            AppProfile.save(a);
             return false;
         });
 
@@ -1614,17 +1616,21 @@ public class DocumentWrapperUI {
         binding.settingLayout.continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(isChecked);
                     config.setContinuousAutoScroll(isChecked);
+                    AppProfile.save(a);
                 }
         );
         binding.settingLayout.continuousAutoScrollCustomSeek.setOnSeekChanged(result -> {
             config.setContinuousAutoScrollSpeed(result);
+            AppProfile.save(a);
             return false;
         });
 
         //Use volume key for page navigation
         binding.settingLayout.volumeToControlSwitch.setChecked(config.isUseVolumeKeyToNavigate());
-        binding.settingLayout.volumeToControlSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                config.setUseVolumeKeyToNavigate(isChecked)
+        binding.settingLayout.volumeToControlSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    config.setUseVolumeKeyToNavigate(isChecked);
+                    AppProfile.save(a);
+                }
         );
 
         //Swipe to left control brightness
@@ -1637,6 +1643,7 @@ public class DocumentWrapperUI {
             public boolean onResultRecive(int result) {
                 config.setBlueLightFilter(result);
                 BrightnessHelper.updateOverlay(binding.overlay);
+                AppProfile.save(a);
                 return false;
             }
         });
@@ -1649,10 +1656,12 @@ public class DocumentWrapperUI {
             } else {
                 config.setAlignment(BookCSS.TEXT_ALIGN_LEFT);
             }
+            AppProfile.save(a);
         });
         binding.settingLayout.lineHeightSeekbar.init(0, 30, config.getLineHeight());
         binding.settingLayout.lineHeightSeekbar.setOnSeekChanged(result -> {
             config.setLineHeight(result);
+            AppProfile.save(a);
             return false;
         });
         binding.settingLayout.hyphenationSwitch.setChecked(config.isHyphenation());
@@ -1660,6 +1669,7 @@ public class DocumentWrapperUI {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 config.setHyphenation(isChecked);
+                AppProfile.save(a);
             }
         });
 
@@ -1671,6 +1681,7 @@ public class DocumentWrapperUI {
                     setInactiveTime(config, binding.settingLayout.inactiveDimTimesRadioGroup.getCheckedRadioButtonId());
                 } else {
                     config.setInactiveTime(0);
+                    AppProfile.save(a);
                 }
             }
         });
@@ -1678,6 +1689,7 @@ public class DocumentWrapperUI {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 setInactiveTime(config, checkedId);
+                AppProfile.save(a);
             }
         });
     }
@@ -1724,7 +1736,7 @@ public class DocumentWrapperUI {
 
     @Subscribe
     public void onMessegeBrightness(MessegeBrightness msg) {
-//        BrightnessHelper.onMessegeBrightness(handler, msg, toastBrightnessText, overlay);
+        BrightnessHelper.onMessegeBrightness(handler, msg, binding.toastBrightnessText, binding.overlay);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

@@ -11,7 +11,7 @@ public class ReaderSettingConfig {
     private int continuousAutoScrollSpeed = AppState.get().continuousAutoScrollSpeed;
     private boolean wholePageAtATime = AppState.get().wholePageAtATime;
     private boolean useVolumeKeyToNavigate = AppState.get().isUseVolumeKeys;
-    private boolean swipeToControlBrightness = AppState.get().swipeToControlBrightness;
+    private boolean swipeToControlBrightness = AppState.get().isBrighrnessEnable;
     private int blueLightFilter = BrightnessHelper.blueLightAlpha();
     private int inactiveTime = AppState.get().inactivityTime;
     private boolean shakeToTakeScreenShort = AppState.get().shakeToTakeScreenShort;

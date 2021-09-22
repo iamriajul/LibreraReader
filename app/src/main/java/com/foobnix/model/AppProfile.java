@@ -4,11 +4,14 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,6 +38,9 @@ import com.foobnix.pdf.info.view.DragingPopup;
 import com.foobnix.pdf.info.wrapper.PasswordState;
 import com.foobnix.pdf.search.view.AsyncProgressResultToastTask;
 import com.foobnix.ui2.AppDB;
+import com.google.gson.Gson;
+
+import org.ebookdroid.model.ReaderSettingConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -98,10 +104,9 @@ public class AppProfile {
             return;
         }
         profile = getCurrent(c);
-        AppDB.get().open(c, "db-"+AppSP.get().rootPath.hashCode()+"-"+profile);
+        AppDB.get().open(c, "db-" + AppSP.get().rootPath.hashCode() + "-" + profile);
         LOG.d("AppProfile init", profile);
-
-
+        LOG.d("AppProfile init: ", AppSP.get().rootPath);
 
         SYNC_FOLDER_ROOT = new File(AppSP.get().rootPath);
         SYNC_FOLDER_BOOKS = new File(SYNC_FOLDER_ROOT, "Books");
@@ -186,13 +191,28 @@ public class AppProfile {
         if (!Android6.canWrite(a)) {
             return;
         }
+        Log.d("AppProfile", "save: ");
         if (TxtUtils.isNotEmpty(profile)) {
+            Log.d("AppProfile", "save: is not empty " + AppProfile.syncState);
+
             DragingPopup.saveCache(a);
+            saveConfig(a, AppState.get().getSettingConfig());
             PasswordState.get().save(a);
             AppState.get().save(a);
             BookCSS.get().save(a);
             AppSP.get().save();
         }
+    }
+
+    private static void saveConfig(Context a, ReaderSettingConfig config) {
+        SharedPreferences sharedPreferences = a.getSharedPreferences("setting_config", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString("config", new Gson().toJson(config)).apply();
+    }
+
+    public static ReaderSettingConfig getSavedConfig(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("setting_config", Context.MODE_PRIVATE);
+        String configJson = sharedPreferences.getString("config", null);
+        return new Gson().fromJson(configJson, ReaderSettingConfig.class);
     }
 
     public static String getCurrent(Context c) {
