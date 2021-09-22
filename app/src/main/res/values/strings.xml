@@ -656,5 +656,6 @@
     <string name="font_arial">Arial</string>
     <string name="font_verdana">Verdana</string>
     <string name="font_castle_t">CastleT</string>
+    <string name="highlight">Highlight</string>
 
 </resources>

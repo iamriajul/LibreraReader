@@ -34,6 +34,7 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -85,6 +86,7 @@ import com.foobnix.ui2.MainTabs2;
 import org.ebookdroid.BookType;
 import org.ebookdroid.LibreraApp;
 import org.ebookdroid.model.ReaderSettingConfig;
+import org.ebookdroid.ui.viewer.bookmark.BookmarkHighlightAndNoteFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -1457,7 +1459,7 @@ public class DocumentWrapperUI {
                 break;
                 case R.id.btnBookmark: {
                     clearMenuItemChecked();
-//                    showBookmarkHighlightAndNote()
+                    showBookmarkHighlightAndNote();
                 }
                 break;
                 case R.id.btnFullScreen: {
@@ -1509,6 +1511,11 @@ public class DocumentWrapperUI {
         hasPageInfoUi = true;
         hasFontFamilyUi = false;
         showPageInfoOrOthers();
+    }
+
+    private void showBookmarkHighlightAndNote() {
+        BookmarkHighlightAndNoteFragment fragment = new BookmarkHighlightAndNoteFragment();
+        fragment.show(a.getSupportFragmentManager(), BookmarkHighlightAndNoteFragment.TAG);
     }
 
     private void showPageInfoOrOthers() {
