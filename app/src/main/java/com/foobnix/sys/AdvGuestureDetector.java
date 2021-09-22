@@ -369,9 +369,6 @@ public class AdvGuestureDetector extends SimpleOnGestureListener implements IMul
 
     /**
      * {@inheritDoc}
-     *
-     * @see org.ebookdroid.common.touch.IMultiTouchListener#onTwoFingerPinch(float,
-     * float)
      */
 
     long time = 0;
@@ -402,8 +399,6 @@ public class AdvGuestureDetector extends SimpleOnGestureListener implements IMul
 
     /**
      * {@inheritDoc}
-     *
-     * @see org.ebookdroid.common.touch.IMultiTouchListener#onTwoFingerPinchEnd()
      */
     @Override
     public void onTwoFingerPinchEnd(final MotionEvent e) {
@@ -422,7 +417,6 @@ public class AdvGuestureDetector extends SimpleOnGestureListener implements IMul
     /**
      * {@inheritDoc}
      *
-     * @see org.ebookdroid.common.touch.IMultiTouchListener#onTwoFingerTap()
      */
     @Override
     public void onTwoFingerTap(final MotionEvent e) {

@@ -9,6 +9,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Pair;
 import android.view.KeyEvent;
 import android.view.View;
@@ -176,12 +177,14 @@ public class VerticalModeController extends DocumentController {
 
     @Override
     public void onSrollLeft() {
+        Log.d("VerticalModeController", "onScrollLeft");
         // ctr.getDocumentController().getView().startPageScroll(5, 0);
         ctr.getDocumentController().getView().scrollBy(Dips.DP_3, 0);
     }
 
     @Override
     public void onSrollRight() {
+        Log.d("VerticalModeController", "onScrollRight");
         // ctr.getDocumentController().getView().startPageScroll(-5, 0);
         ctr.getDocumentController().getView().scrollBy(-1 * Dips.DP_3, 0);
     }

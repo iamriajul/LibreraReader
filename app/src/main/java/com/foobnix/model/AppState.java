@@ -23,6 +23,7 @@ import com.foobnix.pdf.info.widget.DialogTranslateFromTo;
 import com.foobnix.pdf.info.wrapper.MagicHelper;
 import com.foobnix.ui2.AppDB;
 
+import org.ebookdroid.model.ReaderSettingConfig;
 import org.librera.LinkedJSONObject;
 
 import java.util.ArrayList;
@@ -287,6 +288,12 @@ public class AppState {
     public int doubleClickAction1 = DOUBLE_CLICK_ADJUST_PAGE;
     @IgnoreHashCode
     public int inactivityTime = 5;
+    @IgnoreHashCode
+    public boolean wholePageAtATime = false;
+    @IgnoreHashCode
+    public boolean swipeToControlBrightness = false;
+    @IgnoreHashCode
+    public boolean shakeToTakeScreenShort = false;
     @IgnoreHashCode
     public int remindRestTime = 120;
     public int flippingInterval = 10;
@@ -582,6 +589,8 @@ public class AppState {
     public String defaultHyphenLanguageCode = "en";
     public boolean isMenuIntegration = false;
 
+    private ReaderSettingConfig config;
+
     public static Map<String, String> getDictionaries(String input) {
         final Map<String, String> providers = new LinkedHashMap<>();
         String ln = AppState.get().toLang;
@@ -734,4 +743,8 @@ public class AppState {
     }
 
 
+    public ReaderSettingConfig getSettingConfig() {
+        if (config == null) return new ReaderSettingConfig();
+        return config;
+    }
 }

@@ -4,13 +4,10 @@
 package com.foobnix.pdf.info.wrapper;
 
 import static com.foobnix.pdf.info.view.BrightnessHelper.appBrightness;
-import static com.foobnix.pdf.info.view.BrightnessHelper.applyBrightNess;
-import static com.foobnix.pdf.info.view.BrightnessHelper.applyBrigtness;
 import static com.foobnix.pdf.info.view.BrightnessHelper.blueLightAlpha;
 import static com.foobnix.pdf.info.view.BrightnessHelper.getSystemBrigtnessInt;
 import static com.foobnix.pdf.info.view.BrightnessHelper.isEnableBlueFilter;
 
-import android.animation.AnimatorInflater;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,6 +17,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -33,18 +31,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DividerItemDecoration;
 
 import com.foobnix.android.utils.Apps;
@@ -52,7 +45,6 @@ import com.foobnix.android.utils.Dips;
 import com.foobnix.android.utils.IntegerResponse;
 import com.foobnix.android.utils.Keyboards;
 import com.foobnix.android.utils.LOG;
-import com.foobnix.android.utils.ResultResponse;
 import com.foobnix.android.utils.TxtUtils;
 import com.foobnix.android.utils.Vibro;
 import com.foobnix.model.AppSP;
@@ -70,7 +62,6 @@ import com.foobnix.pdf.info.adapters.ChapterAdapter;
 import com.foobnix.pdf.info.databinding.ActivityVerticalViewBinding;
 import com.foobnix.pdf.info.model.BookCSS;
 import com.foobnix.pdf.info.model.OutlineLinkWrapper;
-import com.foobnix.pdf.info.presentation.OutlineAdapter;
 import com.foobnix.pdf.info.view.AnchorHelper;
 import com.foobnix.pdf.info.view.BrightnessHelper;
 import com.foobnix.pdf.info.view.CustomSeek;
@@ -89,9 +80,6 @@ import com.foobnix.tts.TTSService;
 import com.foobnix.tts.TtsStatus;
 import com.foobnix.ui2.AppDB;
 import com.foobnix.ui2.MainTabs2;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.ebookdroid.BookType;
 import org.ebookdroid.LibreraApp;
@@ -424,6 +412,10 @@ public class DocumentWrapperUI {
             if (AppState.get().isContinuousAutoScroll) {
                 onContinuousAutoScrollClick();
             }
+            if (AppState.get().isAutoScroll) {
+                onAutoScrollClick();
+            }
+
         }
     };
     public View.OnClickListener onAutoScroll = new View.OnClickListener() {
@@ -1593,104 +1585,110 @@ public class DocumentWrapperUI {
 
 
     private void setupSettingsView(AppCompatActivity a) {
+        ReaderSettingConfig config = AppState.get().getSettingConfig();
         binding.settingLayout.closeImageView.setOnClickListener(v -> {
             toggleSettingDrawer();
             Log.d("DocumentWrapperUI", "setupSettingsView: " + onRefresh);
             if (onRefresh != null) onRefresh.run();
         });
         //Auto Scroll Config
-        binding.settingLayout.autoScrollSwitch.setChecked(AppState.get().isAutoScroll);
-        binding.settingLayout.autoScrollCustomSeek.setEnabled(AppState.get().isAutoScroll);
-        binding.settingLayout.autoScrollCustomSeek.init(0, 120, AppState.get().autoScrollInterval, "s");
+        binding.settingLayout.autoScrollSwitch.setChecked(config.isAutoScroll());
+        binding.settingLayout.autoScrollCustomSeek.setEnabled(config.isAutoScroll());
+        binding.settingLayout.autoScrollCustomSeek.init(0, 120, config.getAutoScrollInterval(), "s");
         binding.settingLayout.autoScrollCustomSeek.setStep(5);
-        binding.settingLayout.autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                binding.settingLayout.autoScrollCustomSeek.setEnabled(isChecked)
+        binding.settingLayout.autoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    binding.settingLayout.autoScrollCustomSeek.setEnabled(isChecked);
+                    config.setAutoScroll(isChecked);
+                }
         );
         binding.settingLayout.autoScrollCustomSeek.setOnSeekChanged(result -> {
-            AppState.get().autoScrollInterval = result;
+            config.setAutoScrollInterval(result);
             return false;
         });
 
         //Continuous Auto Scoll Config
-        binding.settingLayout.continuousAutoScrollSwitch.setChecked(AppState.get().isContinuousAutoScroll);
-        binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(AppState.get().isContinuousAutoScroll);
-        binding.settingLayout.continuousAutoScrollCustomSeek.init(0, AppState.MAX_SPEED, AppState.get().continuousAutoScrollSpeed, "s");
+        binding.settingLayout.continuousAutoScrollSwitch.setChecked(config.isContinuousAutoScroll());
+        binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(config.isContinuousAutoScroll());
+        binding.settingLayout.continuousAutoScrollCustomSeek.init(0, AppState.MAX_SPEED, config.getContinuousAutoScrollSpeed(), "s");
         binding.settingLayout.continuousAutoScrollCustomSeek.setStep(5);
         binding.settingLayout.continuousAutoScrollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
                     binding.settingLayout.continuousAutoScrollCustomSeek.setEnabled(isChecked);
-                    AppState.get().isContinuousAutoScroll = isChecked;
+                    config.setContinuousAutoScroll(isChecked);
                 }
         );
         binding.settingLayout.continuousAutoScrollCustomSeek.setOnSeekChanged(result -> {
-            AppState.get().continuousAutoScrollSpeed = result;
+            config.setContinuousAutoScrollSpeed(result);
             return false;
         });
 
         //Use volume key for page navigation
-        binding.settingLayout.volumeToControlSwitch.setChecked(AppState.get().isUseVolumeKeys);
+        binding.settingLayout.volumeToControlSwitch.setChecked(config.isUseVolumeKeyToNavigate());
         binding.settingLayout.volumeToControlSwitch.setOnCheckedChangeListener((buttonView, isChecked) ->
-                AppState.get().isUseVolumeKeys = isChecked
+                config.setUseVolumeKeyToNavigate(isChecked)
         );
 
+        //Swipe to left control brightness
+        binding.settingLayout.swipeBrightnessSwitch.setChecked(config.isSwipeToControlBrightness());
+        binding.settingLayout.swipeBrightnessSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> config.setSwipeToControlBrightness(isChecked));
         //Blue Light Filter
-        binding.settingLayout.blueLightSeekbar.init(0, 100, BrightnessHelper.blueLightAlpha(), "%");
+        binding.settingLayout.blueLightSeekbar.init(0, 100, config.getBlueLightFilter(), "%");
         binding.settingLayout.blueLightSeekbar.setOnSeekChanged(new IntegerResponse() {
             @Override
             public boolean onResultRecive(int result) {
-                BrightnessHelper.blueLightAlpha(result);
+                config.setBlueLightFilter(result);
                 BrightnessHelper.updateOverlay(binding.overlay);
                 return false;
             }
         });
 
 
-        binding.settingLayout.alignmentJustifySwitch.setChecked(BookCSS.get().textAlign == BookCSS.TEXT_ALIGN_JUSTIFY);
+        binding.settingLayout.alignmentJustifySwitch.setChecked(config.getAlignment() == BookCSS.TEXT_ALIGN_JUSTIFY);
         binding.settingLayout.alignmentJustifySwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                BookCSS.get().textAlign = BookCSS.TEXT_ALIGN_JUSTIFY;
+                config.setAlignment(BookCSS.TEXT_ALIGN_JUSTIFY);
             } else {
-                BookCSS.get().textAlign = BookCSS.TEXT_ALIGN_LEFT;
+                config.setAlignment(BookCSS.TEXT_ALIGN_LEFT);
             }
         });
-        binding.settingLayout.lineHeightSeekbar.init(0, 30, BookCSS.get().lineHeight);
+        binding.settingLayout.lineHeightSeekbar.init(0, 30, config.getLineHeight());
         binding.settingLayout.lineHeightSeekbar.setOnSeekChanged(result -> {
-            BookCSS.get().lineHeight = result;
+            config.setLineHeight(result);
             return false;
         });
-        binding.settingLayout.hyphenationSwitch.setChecked(AppState.get().isDefaultHyphenLanguage);
+        binding.settingLayout.hyphenationSwitch.setChecked(config.isHyphenation());
         binding.settingLayout.hyphenationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                AppState.get().isDefaultHyphenLanguage = isChecked;
+                config.setHyphenation(isChecked);
             }
         });
 
-        binding.settingLayout.inactiveDimSwitch.setChecked(AppState.get().inactivityTime != 0);
+        binding.settingLayout.inactiveDimSwitch.setChecked(config.getInactiveTime() != 0);
         binding.settingLayout.inactiveDimSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    setInactiveTime(binding.settingLayout.inactiveDimTimesRadioGroup.getCheckedRadioButtonId());
+                    setInactiveTime(config, binding.settingLayout.inactiveDimTimesRadioGroup.getCheckedRadioButtonId());
                 } else {
-                    AppState.get().inactivityTime = 0;
+                    config.setInactiveTime(0);
                 }
             }
         });
         binding.settingLayout.inactiveDimTimesRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                setInactiveTime(checkedId);
+                setInactiveTime(config, checkedId);
             }
         });
     }
 
-    private void setInactiveTime(int checkedId) {
+    private void setInactiveTime(ReaderSettingConfig config, int checkedId) {
         if (checkedId == R.id.five_min_radio_btn) {
-            AppState.get().inactivityTime = 5;
+            config.setInactiveTime(5);
         } else if (checkedId == R.id.ten_min_radio_btn) {
-            AppState.get().inactivityTime = 10;
+            config.setInactiveTime(10);
         } else if (checkedId == R.id.fifteen_min_radio_btn) {
-            AppState.get().inactivityTime = 15;
+            config.setInactiveTime(15);
         }
     }
 
@@ -2000,6 +1998,25 @@ public class DocumentWrapperUI {
         updateUI();
     }
 
+    private final Handler autoScrollHandler = new Handler(Looper.getMainLooper());
+    private final Runnable autoScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            Log.d("DocumentWrapperUI", "auto scroll run");
+            dc.onNextPage(true);
+            autoScrollHandler.removeCallbacks(this);
+            autoScrollHandler.postDelayed(
+                    autoScrollRunnable,
+                    AppState.get().getSettingConfig().getAutoScrollInterval() * 1000L
+            );
+        }
+    };
+
+    public void onAutoScrollClick() {
+        autoScrollRunnable.run();
+        Log.d("DocumentWrapperUI", "onAutoScrollClick");
+    }
+
     private boolean closeDialogs() {
         return dc.closeDialogs();
     }
@@ -2178,7 +2195,7 @@ public class DocumentWrapperUI {
         LOG.d("DocumentWrapperUI", "onDestroy");
         handlerTimer.removeCallbacksAndMessages(null);
         handler.removeCallbacksAndMessages(null);
-
+        autoScrollHandler.removeCallbacks(autoScrollRunnable);
     }
 
     public void onConfigChanged() {
