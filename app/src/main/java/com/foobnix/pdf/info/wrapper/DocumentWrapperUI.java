@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.LinearLayoutCompat;
 import androidx.appcompat.widget.Toolbar;
@@ -92,6 +93,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.ebookdroid.BookType;
 import org.ebookdroid.LibreraApp;
+import org.ebookdroid.ui.viewer.bookmark.BookmarkHighlightAndNoteFragment;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -233,7 +235,7 @@ public class DocumentWrapperUI {
 
         }
     };
-    Activity a;
+    AppCompatActivity a;
     ActivityVerticalViewBinding binding;
     String bookTitle;
     View overlay;
@@ -1058,7 +1060,7 @@ public class DocumentWrapperUI {
     }
 
 
-    public void initUI(final Activity a, final ActivityVerticalViewBinding binding) {
+    public void initUI(final AppCompatActivity a, final ActivityVerticalViewBinding binding) {
         this.a = a;
         this.binding = binding;
         quickBookmark = a.getString(R.string.fast_bookmark);
@@ -1457,7 +1459,7 @@ public class DocumentWrapperUI {
                 break;
                 case R.id.btnBookmark: {
                     clearMenuItemChecked();
-//                    showBookmarkHighlightAndNote()
+                    showBookmarkHighlightAndNote();
                 }
                 break;
                 case R.id.btnFullScreen: {
@@ -1509,6 +1511,11 @@ public class DocumentWrapperUI {
         hasPageInfoUi = true;
         hasFontFamilyUi = false;
         showPageInfoOrOthers();
+    }
+
+    private void showBookmarkHighlightAndNote() {
+        BookmarkHighlightAndNoteFragment fragment = new BookmarkHighlightAndNoteFragment();
+        fragment.show(a.getSupportFragmentManager(), BookmarkHighlightAndNoteFragment.TAG);
     }
 
     private void showPageInfoOrOthers() {

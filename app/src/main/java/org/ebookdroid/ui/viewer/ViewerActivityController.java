@@ -11,6 +11,8 @@ import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.foobnix.android.utils.Apps;
 import com.foobnix.android.utils.Intents;
 import com.foobnix.android.utils.LOG;
@@ -347,7 +349,7 @@ public class ViewerActivityController extends ActionController<VerticalViewActiv
 
     }
 
-    public void createWrapper(Activity a, ActivityVerticalViewBinding binding) {
+    public void createWrapper(AppCompatActivity a, ActivityVerticalViewBinding binding) {
         try {
             String file = a.getIntent().getData().getPath();
 
