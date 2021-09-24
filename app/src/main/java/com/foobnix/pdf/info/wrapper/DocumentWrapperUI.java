@@ -1793,7 +1793,7 @@ public class DocumentWrapperUI {
     public void doShowHideWrapperControlls() {
         AppState.get().isEditMode = !AppState.get().isEditMode;
         hideShow();
-        Keyboards.invalidateEink(parentParent);
+//        Keyboards.invalidateEink(parentParent);
 
     }
 
@@ -1824,7 +1824,7 @@ public class DocumentWrapperUI {
                 public boolean onMenuItemClick(MenuItem item) {
                     AppState.get().nextScreenScrollBy = values.get(n);
                     initNextType();
-                    Keyboards.hideNavigation(dc.getActivity());
+//                    Keyboards.hideNavigation(dc.getActivity());
                     return false;
                 }
             });
@@ -1859,7 +1859,7 @@ public class DocumentWrapperUI {
                     public void onClick(DialogInterface dialog, int which) {
                         AppState.get().nextScreenScrollBy = AppState.get().nextScreenScrollMyValue;
                         initNextType();
-                        Keyboards.hideNavigation(dc.getActivity());
+//                        Keyboards.hideNavigation(dc.getActivity());
 
                     }
                 });
